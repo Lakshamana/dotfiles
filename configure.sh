@@ -3,6 +3,9 @@
 
 #!/bin/bash
 
+# set variables
+GITHUB_USERNAME='Lakshamana'
+
 # util functions
 show_usage() {
       echo 'Installs minimal setup needed packages and configs'
@@ -69,13 +72,16 @@ prompt_user() {
 
 # install iosevka font
 install_font() {
+      log 'cloning iosevka font repository...'
       git clone --depth=1 https://github.com/Lakshamana/iosevka-docker.git ~/.iosevka-custom
       cd ~/.iosevka-custom
 
+      log 'building container...'
       # build iosevka docker image and run, extract iosevka-custom ttf files
       docker build -t iosevka_build . -f Dockerfile
       docker run -e -it -v $(pwd)/build:/build iosevka_build ttf::iosevka-custom
 
+      log 'copying font files to fonts folder'
       # copy files to fonts folder
       cp -r build/dist/* /usr/share/fonts/
       fc-cache
@@ -93,6 +99,7 @@ sudo pacman -Sy \
       maim \
       python \
       xclip \
+      base \
       base-devel \
       zsh \
       curl \
@@ -111,7 +118,18 @@ sudo pacman -Sy \
       i3status \
       pavucontrol \
       docker \
-      docker-compose
+      docker-compose \
+      pipewire \
+      pipewire-alsa \
+      pipewire-pulse \
+      wireplumber \
+      networkmanager \
+      networkmanager-openrc \
+      networkmanager-openvpn \
+      network-manager-applet
+
+log 'setup dotfiles with chezmoi...'
+chezmoi init --apply $GITHUB_USERNAME
 
 log 'downloading oh-my-zsh + zplug...'
 # setup zsh (ohmyzsh + zplug + config)
