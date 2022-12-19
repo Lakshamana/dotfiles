@@ -110,16 +110,14 @@ sudo pacman -Sy \
       zathura \
       zathura-pdf-mupdf \
       neovim \
-      vim \
-      chezmoi \
       i3-gaps \
       i3blocks \
-      i3exit \
       i3lock \
       i3status \
       pavucontrol \
       docker \
       docker-compose \
+      docker-openrc \
       pipewire \
       pipewire-alsa \
       pipewire-pulse \
@@ -127,15 +125,16 @@ sudo pacman -Sy \
       networkmanager \
       networkmanager-openrc \
       networkmanager-openvpn \
-      network-manager-applet
+      network-manager-applet \
+      reflector
 
 log 'configuring docker for non root users...'
-sudo groupadd docker
-sudo usermod -aG docker $USER
-newgrp docker
+sudo rc-update add docker default
+sudo rc-service docker start
 
-log 'setup dotfiles with chezmoi...'
-chezmoi init --apply $GITHUB_USERNAME
+#log 'setup dotfiles with chezmoi...'
+#chezmoi init --apply $GITHUB_USERNAME
+chezmoi update -v
 
 log 'downloading oh-my-zsh + zplug...'
 # setup zsh (ohmyzsh + zplug + config)
@@ -145,21 +144,29 @@ log 'updated zsh conf. Will restart at the end...'
 
 log 'downloading and installing yay...'
 # install yay
-cd /opt
+if test -d /opt; then cd /opt; else sudo mkdir /opt && cd /opt; fi
 sudo git clone https://aur.archlinux.org/yay.git
-cd yay && makepkg -si
+cd yay
+sudo chown -R arjuna:arjuna .
+makepkg -si
 cd $HOME # go back to previous dir
 
 log 'updating mirrorlist...'
 yay -Sy rankmirrors
 
-rankmirrors -v -n 5 /etc/pacman.d/mirrorlist.pacnew | tee /etc/pacman.d/mirrorlist
-reflector --score 5  --protocol https | tee /etc/pacman.d/mirrorlist-arch
-pacman -Sc --noconfirm
-pacman -Syu --noconfirm
+sudo rankmirrors -v -n 5 /etc/pacman.d/mirrorlist.pacnew | sudo tee /etc/pacman.d/mirrorlist
+sudo reflector --score 5  --protocol https | sudo tee /etc/pacman.d/mirrorlist-arch
+sudo pacman -Sc --noconfirm
+sudo pacman -Syu --noconfirm
 
 log 'downloading asdf...'
 yay -Sy asdf-vm
+
+log 'downloading xaskpass...'
+yay -Sy xaskpass
+
+log 'adding temporarily asdf to $PATH'
+export PATH=$PATH:/opt/asdf-vm/bin
 
 # setup asdf
 asdf plugin-add nodejs
@@ -184,7 +191,3 @@ fi
 # should I install iosevka-custom font?
 prompt_result=`prompt_user "Install iosevka-custom font?" 'y'`
 if [[ $prompt_result == 'y' ]]; then install_font; fi
-
-# restart i3
-i3-msg restart
-log 'just restarted i3...'
