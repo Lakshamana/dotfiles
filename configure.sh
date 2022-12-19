@@ -81,7 +81,7 @@ install_font() {
       docker build -t iosevka_build . -f Dockerfile
       docker run -e -it -v $(pwd)/build:/build iosevka_build ttf::iosevka-custom
 
-      log 'copying font files to fonts folder'
+      log 'copying font files to fonts folder...'
       # copy files to fonts folder
       cp -r build/dist/* /usr/share/fonts/
       fc-cache
@@ -99,6 +99,7 @@ sudo pacman -Sy \
       maim \
       python \
       xclip \
+      bitwarden \
       base \
       base-devel \
       zsh \
@@ -127,6 +128,11 @@ sudo pacman -Sy \
       networkmanager-openrc \
       networkmanager-openvpn \
       network-manager-applet
+
+log 'configuring docker for non root users...'
+sudo groupadd docker
+sudo usermod -aG docker $USER
+newgrp docker
 
 log 'setup dotfiles with chezmoi...'
 chezmoi init --apply $GITHUB_USERNAME
