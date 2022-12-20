@@ -1,0 +1,2 @@
+#!/bin/zsh
+openssl aes-256-cbc -iter 10000 -salt -pbkdf2 -d -in $1

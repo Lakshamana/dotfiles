@@ -1,0 +1,2 @@
+#!/bin/zsh
+echo -n $1 | openssl aes-256-cbc -iter 10000 -salt -pbkdf2 > $2

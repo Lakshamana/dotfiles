@@ -1,1 +1,0 @@
-../Dotfiles/scripts/lightsOn.sh

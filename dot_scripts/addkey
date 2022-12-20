@@ -1,0 +1,19 @@
+#!/bin/zsh
+
+content=`sudo ~/.scripts/decrypt "$1"`
+
+read 'Type in the host you want to save credentials for: ' host
+read 'Type in your username: ' login
+read 'Type in your password: ' password
+
+new_content="$content
+  $host:
+    - login: $login
+      passwd: $password"
+
+echo -ne "$new_content"
+# echo -ne "$new_content" > /tmp/.tmp
+#
+# sudo ~/.scripts/encrypt /tmp/.tmp /etc/.txf.cry
+#
+# rm /tmp/.tmp

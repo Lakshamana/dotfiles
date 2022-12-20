@@ -1,0 +1,8 @@
+layout=`setxkbmap -query | grep layout | awk '{print $2}' | tr "," "\n" | head -1`
+variant=`localectl list-x11-keymap-variants "$layout" | dmenu -i -p "Choose a variant:"`
+
+[[ $variant == "" || $layout == "" ]] && exit 1
+
+setxkbmap -layout $layout -variant $variant
+xmodmap ~/.Xmodmap
+notify-send "Using variant $variant for layout $layout"

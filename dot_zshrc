@@ -8,7 +8,7 @@ source ~/.zplug/init.zsh
 
 # Path to your oh-my-zsh installation.
 export ZSH="/home/$USER/.oh-my-zsh"
-export EDITOR='vim'
+export EDITOR='nvim'
 
 # export $BROWSER
 export BROWSER="/usr/bin/microsoft-edge-beta"

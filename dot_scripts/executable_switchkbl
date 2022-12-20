@@ -1,0 +1,15 @@
+langs=`localectl list-x11-keymap-layouts`
+
+# set previous layout as fallback
+previous_layout=`setxkbmap -query | grep layout | awk '{print $2}'`
+
+# make layout searching easier again, temporarily
+setxkbmap -layout us
+
+choice=`echo "$langs" | dmenu -i -p "Choose a layout:"`
+
+[[ $choice == "" ]] && setxkbmap -layout $previous_layout && xmodmap ~/.Xmodmap
+
+setxkbmap -layout $choice
+xmodmap ~/.Xmodmap
+notify-send "Using keyboard layout: $choice"
