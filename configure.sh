@@ -73,7 +73,7 @@ prompt_user() {
 # install iosevka font
 install_font() {
       log 'cloning iosevka font repository...'
-      git clone --depth=1 https://github.com/Lakshamana/iosevka-docker.git ~/.iosevka-custom
+      git clone --depth=1 -b feat/iosevka-custom https://github.com/Lakshamana/iosevka-docker.git ~/.iosevka-custom
       cd ~/.iosevka-custom
 
       log 'building container...'
@@ -83,7 +83,7 @@ install_font() {
 
       log 'copying font files to fonts folder...'
       # copy files to fonts folder
-      cp -r build/dist/* /usr/share/fonts/
+      sudo cp -r build/dist/* /usr/share/fonts/
       fc-cache
       cd $HOME
 }
