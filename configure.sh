@@ -92,9 +92,26 @@ install_font() {
 log 'going to $HOME directory..'
 cd $HOME
 
-log 'installing necessary packages...'
+log 'installing chezmoi dotfile manager...'
+
+
+log 'setup dotfiles with chezmoi...'
+chezmoi update -v
+
+log 'installing both artix and arch mirrors...'
+sudo cp mirrorlist /etc/pacman.d/mirrorlist
+sudo cp mirrorlist-arch /etc/pacman.d/mirrorlist-arch
+sudo cp pacman.conf /etc
+
+log 'installing archlinux support...'
+sudo pacman -Syu
+sudo pacman -S artix-archlinux-support
+
+log 'installing other packages needed...'
 sudo pacman -Sy \
       xorg \
+      xorg-xinit \
+      xorg-xrandr \
       mesa \
       maim \
       python \
@@ -132,10 +149,6 @@ sudo pacman -Sy \
 log 'configuring docker for non root users...'
 sudo rc-update add docker default
 sudo rc-service docker start
-
-#log 'setup dotfiles with chezmoi...'
-#chezmoi init --apply $GITHUB_USERNAME
-chezmoi update -v
 
 log 'downloading oh-my-zsh + zplug...'
 # setup zsh (ohmyzsh + zplug + config)
