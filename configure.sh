@@ -144,7 +144,13 @@ sudo pacman -Sy \
       networkmanager-openvpn \
       network-manager-applet \
       python \
-      python-pip
+      python-pip \
+      dunst \
+      libnotify \
+      dmenu \
+      rofi \
+      ttf-terminus-nerd \
+      rofi-calc
 
 log 'configuring docker for non root users...'
 sudo rc-update add docker default
@@ -169,7 +175,7 @@ log 'downloading asdf...'
 yay -Sy asdf-vm
 
 log 'downloading xaskpass...'
-yay -Sy xaskpass
+yay -Sy xaskpass clipcatd pa-applet
 
 log 'adding temporarily asdf to $PATH'
 export PATH=$PATH:/opt/asdf-vm/bin
@@ -178,9 +184,16 @@ export PATH=$PATH:/opt/asdf-vm/bin
 asdf plugin-add nodejs
 
 # install nodejs
+log 'setup nodejs asdf env...'
 asdf install nodejs lts
 asdf global nodejs lts
-log 'setup nodejs asdf env'
+asdf reshim
+
+log 'install neovim python support...'
+pip install neovim
+
+log 'install i3ipc module...'
+pip install i3ipc
 
 log 'downloading vim-plug now...'
 sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
