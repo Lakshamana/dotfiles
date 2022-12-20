@@ -126,7 +126,8 @@ sudo pacman -Sy \
       networkmanager-openrc \
       networkmanager-openvpn \
       network-manager-applet \
-      reflector
+      python \
+      python-pip
 
 log 'configuring docker for non root users...'
 sudo rc-update add docker default
@@ -151,14 +152,6 @@ sudo chown -R arjuna:arjuna .
 makepkg -si
 cd $HOME # go back to previous dir
 
-log 'updating mirrorlist...'
-yay -Sy rankmirrors
-
-sudo rankmirrors -v -n 5 /etc/pacman.d/mirrorlist.pacnew | sudo tee /etc/pacman.d/mirrorlist
-sudo reflector --score 5  --protocol https | sudo tee /etc/pacman.d/mirrorlist-arch
-sudo pacman -Sc --noconfirm
-sudo pacman -Syu --noconfirm
-
 log 'downloading asdf...'
 yay -Sy asdf-vm
 
@@ -173,6 +166,7 @@ asdf plugin-add nodejs
 
 # install nodejs
 asdf install nodejs lts
+asdf global nodejs lts
 log 'setup nodejs asdf env'
 
 log 'downloading vim-plug now...'
