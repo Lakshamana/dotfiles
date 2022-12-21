@@ -197,7 +197,7 @@ asdf plugin-add nodejs
 log 'setup nodejs asdf env...'
 asdf install nodejs lts
 asdf global nodejs lts
-asdf reshim
+asdf reshim nodejs
 
 log 'install neovim python support...'
 pip install neovim
