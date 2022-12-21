@@ -93,7 +93,7 @@ log 'going to $HOME directory..'
 cd $HOME
 
 log 'installing chezmoi dotfile manager...'
-
+sudo sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/bin
 
 log 'setup dotfiles with chezmoi...'
 chezmoi update -v
@@ -154,7 +154,8 @@ sudo pacman -Sy \
       dmenu \
       rofi \
       ttf-terminus-nerd \
-      rofi-calc
+      rofi-calc \
+      polkit
 
 log 'configuring docker for non root users...'
 sudo rc-update add docker default
