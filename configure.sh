@@ -139,6 +139,10 @@ sudo pacman -Sy \
       pipewire-alsa \
       pipewire-pulse \
       wireplumber \
+      bluez \
+      bluez-libs \
+      bluez-openrc \
+      bluez-utils \
       networkmanager \
       networkmanager-openrc \
       networkmanager-openvpn \
