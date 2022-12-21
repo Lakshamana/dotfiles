@@ -176,11 +176,16 @@ sudo chown -R arjuna:arjuna .
 makepkg -si
 cd $HOME # go back to previous dir
 
-log 'downloading asdf...'
-yay -Sy asdf-vm
-
-log 'downloading xaskpass...'
-yay -Sy xaskpass clipcatd pa-applet
+log 'downloading aur packages...'
+yay -Sy \
+      asdf-vm \
+      xaskpass \
+      clipcatd \
+      pa-applet \
+      nerd-fonts-dejavu-complete \
+      ttf-nerd-fonts-symbols-2048-em \
+      ttf-nerd-fonts-symbols-common \
+      powerline-console-fonts
 
 log 'adding temporarily asdf to $PATH'
 export PATH=$PATH:/opt/asdf-vm/bin
