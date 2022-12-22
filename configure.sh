@@ -161,6 +161,10 @@ log 'configuring docker for non root users...'
 sudo rc-update add docker default
 sudo rc-service docker start
 
+log 'enable bluetooth service by default...'
+sudo rc-update add bluetoothd default
+sudo rc-service bluetoothd start
+
 log 'downloading oh-my-zsh + zplug...'
 # setup zsh (ohmyzsh + zplug + config)
 sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
