@@ -83,7 +83,7 @@ install_font() {
 
       log 'copying font files to fonts folder...'
       # copy files to fonts folder
-      sudo cp -r build/dist/* /usr/share/fonts/
+      sudo cp -r dist/* /usr/share/fonts/
       fc-cache
       cd $HOME
 }
