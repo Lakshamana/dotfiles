@@ -218,6 +218,8 @@ if [ $? -eq 0 ]; then
       sudo npm i -g pnpm
 fi
 
+zplug install
+
 # should I install iosevka-custom font?
 prompt_result=`prompt_user "Install iosevka-custom font?" 'y'`
 if [[ $prompt_result == 'y' ]]; then install_font; fi
