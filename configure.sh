@@ -79,7 +79,7 @@ install_font() {
       log 'building container...'
       # build iosevka docker image and run, extract iosevka-custom ttf files
       docker build -t iosevka_build . -f Dockerfile
-      docker run -e -it -v $(pwd)/build:/build iosevka_build ttf::iosevka-custom
+      docker run -e -it -v $(pwd):/build iosevka_build ttf::iosevka-custom
 
       log 'copying font files to fonts folder...'
       # copy files to fonts folder
