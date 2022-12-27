@@ -154,6 +154,7 @@ sudo pacman -Sy \
       dmenu \
       rofi \
       ttf-terminus-nerd \
+      ttf-nerd-fonts-symbols-common \
       rofi-calc \
       polkit
 
