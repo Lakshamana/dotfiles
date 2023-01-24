@@ -156,7 +156,17 @@ sudo pacman -Sy \
       ttf-terminus-nerd \
       ttf-nerd-fonts-symbols-common \
       rofi-calc \
-      polkit
+      polkit \
+      ntp \
+      ntp-openrc
+
+log 'configuring NetworkManager...'
+sudo rc-update add NetworkManager default
+sudo rc-service NetworkManager start
+
+log 'configuring ntpd...'
+sudo rc-update add ntpd default
+sudo rc-service ntpd start
 
 log 'configuring docker for non root users...'
 sudo rc-update add docker default
