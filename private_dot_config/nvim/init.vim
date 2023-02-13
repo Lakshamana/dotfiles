@@ -68,7 +68,6 @@ Plug 'tomtom/tcomment_vim'
 Plug 'henrik/vim-qargs'
 Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'andymass/vim-matchup'
-" Plug 'shmargum/vim-sass-colors'
 Plug 'gko/vim-coloresque'
 Plug 'ap/vim-buftabline'
 Plug 'nicklasos/vimphphtml'
@@ -76,13 +75,96 @@ Plug 'turbio/bracey.vim', { 'do': 'npm i --prefix server' }
 Plug 'makerj/vim-pdf'
 Plug 'tpope/vim-haml'
 Plug 'APZelos/blamer.nvim'
-Plug 'puremourning/vimspector'
+" Plug 'puremourning/vimspector'
+Plug 'mfussenegger/nvim-dap'
+Plug 'rcarriga/nvim-dap-ui'
+Plug 'theHamsta/nvim-dap-virtual-text'
+Plug 'williamboman/mason.nvim'
+Plug 'mfussenegger/nvim-dap'
+Plug 'jay-babu/mason-nvim-dap.nvim'
 Plug 'akinsho/nvim-toggleterm.lua'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'lervag/vimtex'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && chmod +x ./install.sh && ./install.sh' }
 Plug 'bingaman/vim-sparkup'
 " Plug 'pocco81/auto-save.nvim'
 call plug#end()
+
+lua << EOF
+require("dapui").setup()
+require('mason').setup()
+require("nvim-dap-virtual-text").setup()
+
+require("mason-nvim-dap").setup({
+  automatic_installation = { "node2" },
+  automatic_setup = {
+    adapters = {
+      node2 = {
+        type = "executable",
+        command = "node-debug2-adapter",
+      },
+    },
+    configurations = {
+      node2 = {
+        {
+          name = 'Node2: Launch',
+          type = 'node2',
+          request = 'launch',
+          program = '${file}',
+          cwd = vim.fn.getcwd(),
+          sourceMaps = true,
+          protocol = 'inspector',
+          console = 'integratedTerminal',
+          skipFiles = {
+            "${workspaceFolder}/node_modules/**/*.js",
+            "<node_internals>/**/*.js"
+          }
+        },
+        {
+          -- For this to work you need to make sure the node process is started with the `--inspect` flag.
+          name = 'Node2: Attach to process',
+          type = 'node2',
+          request = 'attach',
+          processId = require('dap.utils').pick_process,
+          skipFiles = {
+            "${workspaceFolder}/node_modules/**/*.js",
+            "<node_internals>/**/*.js"
+          }
+        }
+      }
+    }
+  }
+})
+
+require'mason-nvim-dap'.setup_handlers {
+  function(s)
+    require('mason-nvim-dap.automatic_setup')(s)
+  end
+}
+
+vim.g.dap_virtual_text = true
+vim.keymap.set('n', '<F5>', function() require('dap').continue() end)
+vim.keymap.set('n', '<F10>', function() require('dap').step_over() end)
+vim.keymap.set('n', '<F11>', function() require('dap').step_into() end)
+vim.keymap.set('n', '<F12>', function() require('dap').step_out() end)
+vim.keymap.set('n', '<F9>', function() require('dap').toggle_breakpoint() end)
+vim.keymap.set('n', '<Leader>dr', function() require('dap').repl.open() end)
+vim.keymap.set('n', '<Leader>dl', function() require('dap').run_last() end)
+vim.keymap.set({'n', 'v'}, '<Leader>dh', function()
+  require('dap.ui.widgets').hover()
+end)
+vim.keymap.set({'n', 'v'}, '<Leader>dp', function()
+  require('dap.ui.widgets').preview()
+end)
+vim.keymap.set('n', '<Leader>df', function()
+local widgets = require('dap.ui.widgets')
+widgets.centered_float(widgets.frames)
+end)
+vim.keymap.set('n', '<Leader>ds', function()
+  local widgets = require('dap.ui.widgets')
+  widgets.centered_float(widgets.scopes)
+end)
+EOF
 
 let g:vimtex_view_method = 'zathura'
 let g:vimtex_compiler_latexmk = { 
