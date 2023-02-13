@@ -6,8 +6,9 @@ let &t_8b = "\<Esc>[48:2:%lu:%lu:%lum"
 set title
 set encoding=utf-8
 set nohlsearch
-set ff=unix
-set ffs=unix
+" set ff=unix
+" set ffs=unix
+set list
 set t_Co=256
 set ignorecase
 set hidden
@@ -34,6 +35,7 @@ set mouse=a
 set autoread
 set autowrite
 set showcmd
+set completeopt="menu, preview"
 
 call plug#begin('~/.nvim/plugged')
 
@@ -75,7 +77,6 @@ Plug 'turbio/bracey.vim', { 'do': 'npm i --prefix server' }
 Plug 'makerj/vim-pdf'
 Plug 'tpope/vim-haml'
 Plug 'APZelos/blamer.nvim'
-" Plug 'puremourning/vimspector'
 Plug 'mfussenegger/nvim-dap'
 Plug 'rcarriga/nvim-dap-ui'
 Plug 'theHamsta/nvim-dap-virtual-text'
@@ -83,88 +84,13 @@ Plug 'williamboman/mason.nvim'
 Plug 'mfussenegger/nvim-dap'
 Plug 'jay-babu/mason-nvim-dap.nvim'
 Plug 'akinsho/nvim-toggleterm.lua'
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
 Plug 'lervag/vimtex'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && chmod +x ./install.sh && ./install.sh' }
 Plug 'bingaman/vim-sparkup'
-" Plug 'pocco81/auto-save.nvim'
 call plug#end()
 
-lua << EOF
-require("dapui").setup()
-require('mason').setup()
-require("nvim-dap-virtual-text").setup()
-
-require("mason-nvim-dap").setup({
-  automatic_installation = { "node2" },
-  automatic_setup = {
-    adapters = {
-      node2 = {
-        type = "executable",
-        command = "node-debug2-adapter",
-      },
-    },
-    configurations = {
-      node2 = {
-        {
-          name = 'Node2: Launch',
-          type = 'node2',
-          request = 'launch',
-          program = '${file}',
-          cwd = vim.fn.getcwd(),
-          sourceMaps = true,
-          protocol = 'inspector',
-          console = 'integratedTerminal',
-          skipFiles = {
-            "${workspaceFolder}/node_modules/**/*.js",
-            "<node_internals>/**/*.js"
-          }
-        },
-        {
-          -- For this to work you need to make sure the node process is started with the `--inspect` flag.
-          name = 'Node2: Attach to process',
-          type = 'node2',
-          request = 'attach',
-          processId = require('dap.utils').pick_process,
-          skipFiles = {
-            "${workspaceFolder}/node_modules/**/*.js",
-            "<node_internals>/**/*.js"
-          }
-        }
-      }
-    }
-  }
-})
-
-require'mason-nvim-dap'.setup_handlers {
-  function(s)
-    require('mason-nvim-dap.automatic_setup')(s)
-  end
-}
-
-vim.g.dap_virtual_text = true
-vim.keymap.set('n', '<F5>', function() require('dap').continue() end)
-vim.keymap.set('n', '<F10>', function() require('dap').step_over() end)
-vim.keymap.set('n', '<F11>', function() require('dap').step_into() end)
-vim.keymap.set('n', '<F12>', function() require('dap').step_out() end)
-vim.keymap.set('n', '<F9>', function() require('dap').toggle_breakpoint() end)
-vim.keymap.set('n', '<Leader>dr', function() require('dap').repl.open() end)
-vim.keymap.set('n', '<Leader>dl', function() require('dap').run_last() end)
-vim.keymap.set({'n', 'v'}, '<Leader>dh', function()
-  require('dap.ui.widgets').hover()
-end)
-vim.keymap.set({'n', 'v'}, '<Leader>dp', function()
-  require('dap.ui.widgets').preview()
-end)
-vim.keymap.set('n', '<Leader>df', function()
-local widgets = require('dap.ui.widgets')
-widgets.centered_float(widgets.frames)
-end)
-vim.keymap.set('n', '<Leader>ds', function()
-  local widgets = require('dap.ui.widgets')
-  widgets.centered_float(widgets.scopes)
-end)
-EOF
+lua require('config')
 
 let g:vimtex_view_method = 'zathura'
 let g:vimtex_compiler_latexmk = { 
@@ -195,75 +121,6 @@ let g:vimtex_quickfix_ignore_filters = [
 
 tnoremap <silent> <C-q> <C-\><C-n>
 
-let g:vimspector_enable_mappings = 'HUMAN'
-
-nnoremap <Leader>dd :call vimspector#Launch()<CR>
-nnoremap <Leader>de :call vimspector#Reset()<CR>
-nnoremap <Leader>dc :call vimspector#Continue()<CR>
-
-nnoremap <Leader>dt :call vimspector#ToggleBreakpoint()<CR>
-nnoremap <Leader>dT :call vimspector#ClearBreakpoints()<CR>
-
-nmap <Leader>dk <Plug>VimspectorRestart
-nmap <Leader>dh <Plug>VimspectorStepOut
-nmap <Leader>dl <Plug>VimspectorStepInto
-nmap <Leader>dj <Plug>VimspectorStepOver
-
-" mnemonic 'di' = 'debug inspect' (pick your own, if you prefer!)
-
-" for normal mode - the word under the cursor
-nmap <Leader>di <Plug>VimspectorBalloonEval
-" for visual mode, the visually selected text
-xmap <Leader>di <Plug>VimspectorBalloonEval
-
-" customize the UI to add Fkeys
-" Set the basic sizes
-let g:vimspector_sidebar_width = 80
-let g:vimspector_code_minwidth = 85
-let g:vimspector_terminal_minwidth = 75
-
-function! s:CustomiseWinBar()
-        call win_gotoid( g:vimspector_session_windows.code )
-        echo g:vimspector_session_windows.code
-        " Clear the existing WinBar created by VimspectorS
-        nunmenu WinBar
-        nnoremenu WinBar.■\ Stop\(F3\) :call vimspector#Stop( { 'interactive': v:false } )<CR>
-        nnoremenu WinBar.▶\ Cont\(F5\) :call vimspector#Continue()<CR>
-        nnoremenu WinBar.▷\ Pause\(F6\) :call vimspector#Pause()<CR>
-        nnoremenu WinBar.↷\ Next\(F10\) :call vimspector#StepOver()<CR>
-        nnoremenu WinBar.→\ Step\(F11\) :call vimspector#StepInto()<CR>
-        nnoremenu WinBar.←\ Out\(F12\) :call vimspector#StepOut()<CR>
-        nnoremenu WinBar.⟲:\(F4\) :call vimspector#Restart()<CR>
-        nnoremenu WinBar.✕ :call vimspector#Reset( { 'interactive': v:false } )<CR>
-  " Cretae our own WinBar
-endfunction
-
-
-function s:SetUpTerminal()
-        " Customise the terminal window size/position
-        " For some reasons terminal buffers in Neovim have line numbers
-        call win_gotoid( g:vimspector_session_windows.terminal )
-        set number relativenumber
-endfunction
-
-augroup MyVimspectorUICustomistaion
-        autocmd!
-        autocmd User VimspectorUICreated call s:CustomiseWinBar()
-        autocmd User VimspectorTerminalOpened call s:SetUpTerminal()
-augroup END
-
-let g:bracey_refresh_on_save = 1
-
-let g:livepreview_previewer = 'zathura'
-
-let g:EditorConfig_exclude_patterns = ['fugitive://.*']
-
-function! ToggleEnableBuftabline()
-  let x = 1 - g:buftabline_show
-  let g:buftabline_show = x
-  call buftabline#update(0)
-endfunction
-
 " Buftabline
 let g:buftabline_show = 1
 nnoremap <silent> <Leader>bf :call ToggleEnableBuftabline()<CR>
@@ -275,25 +132,6 @@ augroup AUTOSAVE
   au!
   autocmd InsertLeave,TextChanged,FocusLost * silent! write
 augroup END
-
-" lua << EOF
-" local autosave = require("autosave")
-" autosave.setup(
-"   {
-"       enabled = false,
-"       events = {"CursorHold", "FocusGained"},
-"       conditions = {
-"           exists = true,
-"           filetype_is_not = {},
-"           modifiable = true
-"       },
-"       write_all_buffers = false,
-"       on_off_commands = true,
-"       clean_command_line_interval = 1000,
-"       debounce_delay = 300
-"   }
-" )
-" EOF
 
 " auto read buffers for externally modified files
 au FocusGained,BufEnter * :checktime
