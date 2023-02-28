@@ -81,16 +81,15 @@ Plug 'mfussenegger/nvim-dap'
 Plug 'rcarriga/nvim-dap-ui'
 Plug 'theHamsta/nvim-dap-virtual-text'
 Plug 'williamboman/mason.nvim'
-Plug 'mfussenegger/nvim-dap'
 Plug 'jay-babu/mason-nvim-dap.nvim'
 Plug 'akinsho/nvim-toggleterm.lua'
 Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
 Plug 'lervag/vimtex'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && chmod +x ./install.sh && ./install.sh' }
 Plug 'bingaman/vim-sparkup'
+Plug 'tpope/vim-dadbod'
+Plug 'kristijanhusak/vim-dadbod-ui'
 call plug#end()
-
-lua require('config')
 
 let g:vimtex_view_method = 'zathura'
 let g:vimtex_compiler_latexmk = { 
@@ -118,6 +117,8 @@ let g:vimtex_quickfix_ignore_filters = [
 "   \ },
 "   \ 'cache_enabled': 0
 " \}
+
+autocmd FileType dbout setlocal nofoldenable
 
 tnoremap <silent> <C-q> <C-\><C-n>
 
@@ -622,56 +623,6 @@ autocmd FileType nerdtree setlocal relativenumber
 
 let g:NERDTreeIgnore = ['^node_modules$', '^dist$', '.nuxt$']
 
-" nvim toggleterm
-lua << EOF
-require("toggleterm").setup{
-  size = function(term)
-    if term.direction == "horizontal" then
-      return 10
-    elseif term.direction == "vertical" then
-      return vim.o.columns * 0.4
-    end
-  end,
-  open_mapping = [[<c-\>]],
-  hide_numbers = true, -- hide the number column in toggleterm buffers
-  shade_filetypes = {},
-  shade_terminals = true,
-  shading_factor = 3, -- the degree by which to darken to terminal colour, default: 1 for dark backgrounds, 3 for light
-  start_in_insert = true,
-  insert_mappings = true, -- whether or not the open mapping applies in insert mode
-  persist_size = true,
-  direction = 'horizontal',
-  close_on_exit = true, -- close the terminal window when the process exits
-  shell = vim.o.shell, -- change the default shell
-  -- This field is only relevant if direction is set to 'float'
-  float_opts = {
-    -- The border key is *almost* the same as 'nvim_open_win'
-    -- see :h nvim_open_win for details on borders however
-    -- the 'curved' border is a custom border type
-    -- not natively supported but implemented in this plugin.
-    border = 'single',
-    width = 100,
-    height = 10,
-    winblend = 3,
-    highlights = {
-      border = "Normal",
-      background = "Normal"
-    }
-  }
-}
-
-function _G.set_terminal_keymaps()
-  local opts = {noremap = true}
-
-  vim.api.nvim_buf_set_keymap(0, 't', '<M-h>', [[<C-\><C-n><C-W>h]], opts)
-  vim.api.nvim_buf_set_keymap(0, 't', '<M-j>', [[<C-\><C-n><C-W>j]], opts)
-  vim.api.nvim_buf_set_keymap(0, 't', '<M-k>', [[<C-\><C-n><C-W>k]], opts)
-  vim.api.nvim_buf_set_keymap(0, 't', '<M-l>', [[<C-\><C-n><C-W>l]], opts)
-end
-
-vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
-EOF
-
 " vim-prettier
 " Max line length that prettier will wrap on: a number or 'auto' (use
 " textwidth).
@@ -871,6 +822,9 @@ nmap <silent> <A-Up> :wincmd k<CR>
 nmap <silent> <A-Down> :wincmd j<CR>
 nmap <silent> <A-Left> :wincmd h<CR>
 nmap <silent> <A-Right> :wincmd l<CR>
+nnoremap <silent> <Leader>dd :DBUIToggle<CR>
 
 set conceallevel=0
 set cmdheight=1
+
+luafile ~/.config/nvim/lua/config.lua

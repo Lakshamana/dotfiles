@@ -1,0 +1,2 @@
+#!/bin/bash
+docker exec -e MYSQL_PWD=example -i docker-ymls-db-1 mysql "$@"
