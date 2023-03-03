@@ -8,11 +8,11 @@ set $mod Mod4
 # workspace_layout tabbed <stacking|tabbed>
 
 # Configure border style <normal|1pixel|pixel xx|none|pixel>
-default_border pixel 1
+default_border none
 default_floating_border normal
 
 # Hide borders
-hide_edge_borders none
+hide_edge_borders true
 
 # change borders
 bindsym $mod+u border none
@@ -51,8 +51,8 @@ bindsym $mod+Ctrl+m exec --no-startup-id pavucontrol
 ################################################################################################
 
 # Screen brightness controls
-# bindsym XF86MonBrightnessUp exec "xbacklight -inc 10; notify-send 'brightness up'"
-# bindsym XF86MonBrightnessDown exec "xbacklight -dec 10; notify-send 'brightness down'"
+bindsym XF86MonBrightnessUp exec "xbacklight -inc 10; notify-send 'brightness up'"
+bindsym XF86MonBrightnessDown exec "xbacklight -dec 10; notify-send 'brightness down'"
 
 # Start Applications
 bindsym $mod+Ctrl+b exec terminal -e 'bmenu'
@@ -61,8 +61,8 @@ bindsym $mod+F3 exec pcmanfm
 # bindsym $mod+F3 exec ranger
 bindsym $mod+Shift+F3 exec pcmanfm_pkexec
 bindsym $mod+F5 exec terminal -e 'mocp'
-bindsym $mod+t exec --no-startup-id pkill compton
-bindsym $mod+Ctrl+t exec --no-startup-id compton -b
+bindsym $mod+t exec --no-startup-id pkill picom
+bindsym $mod+Ctrl+t exec --no-startup-id "picom -b --config ~/.config/picom/picon.conf"
 bindsym $mod+Shift+d --release exec "killall dunst; exec notify-send 'restart dunst'"
 bindsym Shift+Print exec --no-startup-id scrot
 bindsym $mod+Shift+Print --release exec --no-startup-id "scrot '%Y-%m-%d_$wx$h.png' -e 'mv $f ~/Pictures/screenshots/'; notify-send 'Screenshot saved to ~/Pictures/screenshots'"
@@ -250,7 +250,7 @@ bindsym $mod+Shift+r restart
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
 
 # Set shut down, restart and locking features
-bindsym $mod+Shift+grave mode "$mode_system"
+bindsym $mod+Escape mode "$mode_system"
 set $mode_system (l)ock, (e)xit, switch_(u)ser, (s)uspend, (h)ibernate, (r)eboot, (Shift+s)hutdown
 mode "$mode_system" {
     bindsym l exec --no-startup-id i3exit lock, mode "default"
@@ -308,10 +308,10 @@ exec --no-startup-id "~/git/general-configs/i3wm/.scripts/lightsOn.sh 540 &"
 exec_always --no-startup-id ff-theme-util
 exec_always --no-startup-id fix_xcursor
 
-exec --no-startup-id ~/.cargo/bin/clipcatd                # start clipcatd at startup
+exec --no-startup-id clipcatd                # start clipcatd at startup
 
-bindsym $mod+i exec "~/.cargo/bin/clipcat-menu insert"
-bindsym $mod+o exec "~/.cargo/bin/clipcat-menu remove"
+bindsym $mod+i exec "clipcat-menu insert"
+bindsym $mod+o exec "clipcat-menu remove"
 
 # Color palette used for the terminal ( ~/.Xresources file )
 # Colors are gathered based on the documentation:
@@ -351,7 +351,7 @@ bar {
 	position top
 
 ## please set your primary output first. Example: 'xrandr --output eDP1 --primary'
-  tray_output DisplayPort-0
+  tray_output eDP-1
 
 	bindsym button4 nop
 	bindsym button5 nop
@@ -390,8 +390,8 @@ bindsym $mod+m bar mode toggle
 #############################
 
 # Set inner/outer gaps
-gaps inner 9
-gaps outer -1
+gaps inner 19
+gaps outer 1
 
 # Additionally, you can issue commands with the following syntax. This is useful to bind keys to changing the gap size.
 # gaps inner|outer current|all set|plus|minus <px>
@@ -399,7 +399,7 @@ gaps outer -1
 # gaps outer all plus 5
 
 # Smart gaps (gaps used if only more than one container on the workspace)
-smart_gaps on
+# smart_gaps on
 
 # Smart borders (draw borders around container only if it is not the only container on this workspace) 
 # on|no_gaps (on=always activate and no_gaps=only activate if the gap size to the edge of the screen is 0)
@@ -442,4 +442,5 @@ mode "$mode_gaps_outer" {
         bindsym Escape mode "default"
 }
 
-exec --no-startup-id "feh --bg-fill ~/Downloads/nasa--hI5dX2ObAs-unsplash.jpg"
+exec --no-startup-id "feh --bg-fill ~/Downloads/sovietwave-car-wp.png"
+exec --no-startup-id "picom -b --config ~/.config/picom/picon.conf"
