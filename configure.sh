@@ -109,6 +109,7 @@ sudo pacman -S artix-archlinux-support
 
 log 'installing other packages needed...'
 sudo pacman -Sy \
+      git \
       xorg \
       xorg-xinit \
       xorg-xrandr \
@@ -200,7 +201,8 @@ yay -Sy \
       nerd-fonts-dejavu-complete \
       ttf-nerd-fonts-symbols-2048-em \
       ttf-nerd-fonts-symbols-common \
-      powerline-console-fonts
+      powerline-console-fonts \
+      picom-git
 
 log 'adding temporarily asdf to $PATH'
 export PATH=$PATH:/opt/asdf-vm/bin
