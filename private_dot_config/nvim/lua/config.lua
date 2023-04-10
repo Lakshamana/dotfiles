@@ -5,8 +5,20 @@ local venv_path = os.getenv('VIRTUAL_ENV') or os.getenv('CONDA_PREFIX')
 
 require('mason-nvim-dap').setup({
   automatic_installation = { 'node2' },
+  handlers = {
+    function(config)
+      -- all sources with no handler get passed here
+
+      -- Keep original functionality
+      require('mason-nvim-dap').default_setup(config)
+    end,
+  },
   automatic_setup = {
     adapters = {
+      mix_task = {
+        type = 'executable',
+        command = 'elixir-ls-debugger'
+      },
       python = {
         type = 'executable',
         command = 'debugpy-adapter',
@@ -17,6 +29,21 @@ require('mason-nvim-dap').setup({
       },
     },
     configurations = {
+      elixir = {
+        {
+          type = 'mix_task',
+          name = 'mix test',
+          task = 'test',
+          taskArgs = { '--trace' },
+          request = 'launch',
+          startApps = false, -- for Phoenix projects
+          projectDir = '${workspaceFolder}',
+          requireFiles = {
+            'test/**/test_helper.exs',
+            'test/**/*_test.exs',
+          },
+        }
+      },
       python = {
         {
           type = 'python', -- the type here established the link to the adapter definition: `dap.adapters.python`
@@ -75,12 +102,6 @@ require('mason-nvim-dap').setup({
     }
   }
 })
-
-require'mason-nvim-dap'.setup_handlers {
-  function(s)
-    require('mason-nvim-dap.automatic_setup')(s)
-  end
-}
 
 local dap, dapui = require('dap'), require('dapui')
 dapui.setup()
