@@ -159,7 +159,8 @@ sudo pacman -Sy \
       rofi-calc \
       polkit \
       ntp \
-      ntp-openrc
+      ntp-openrc \
+      accountsservice
 
 log 'configuring NetworkManager...'
 sudo rc-update add NetworkManager default

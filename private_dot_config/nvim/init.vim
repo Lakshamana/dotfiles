@@ -36,6 +36,8 @@ set autoread
 set autowrite
 set showcmd
 set completeopt="menu, preview"
+set conceallevel=0
+set cmdheight=1
 
 call plug#begin('~/.nvim/plugged')
 
@@ -81,7 +83,8 @@ Plug 'mfussenegger/nvim-dap'
 Plug 'rcarriga/nvim-dap-ui'
 Plug 'theHamsta/nvim-dap-virtual-text'
 Plug 'williamboman/mason.nvim'
-Plug 'jay-babu/mason-nvim-dap.nvim'
+Plug 'mfussenegger/nvim-dap'
+Plug 'jay-babu/mason-nvim-dap.nvim', { 'tag': 'v1.2.2' }
 Plug 'akinsho/nvim-toggleterm.lua'
 Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
 Plug 'lervag/vimtex'
@@ -89,7 +92,11 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && chmod +x ./install.sh &&
 Plug 'bingaman/vim-sparkup'
 Plug 'tpope/vim-dadbod'
 Plug 'kristijanhusak/vim-dadbod-ui'
+Plug 'github/copilot.vim', { 'do': ':Copilot setup' }
+Plug 'inkarkat/vim-advancedsorters'
 call plug#end()
+
+let g:db_ui_use_nerd_fonts = 1
 
 let g:vimtex_view_method = 'zathura'
 let g:vimtex_compiler_latexmk = { 
@@ -117,8 +124,6 @@ let g:vimtex_quickfix_ignore_filters = [
 "   \ },
 "   \ 'cache_enabled': 0
 " \}
-
-autocmd FileType dbout setlocal nofoldenable
 
 tnoremap <silent> <C-q> <C-\><C-n>
 
@@ -448,10 +453,12 @@ nmap <leader>f  <Plug>(coc-format-selected)
 augroup mygroup
   autocmd!
   " Setup formatexpr specified filetype(s).
-  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  autocmd FileType * setl formatexpr=CocAction('formatSelected')
   " Update signature help on jump placeholder.
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 augroup end
+
+autocmd FileType dbout setlocal nofoldenable
 
 " Applying codeAction to the selected region.
 " Example: `<leader>aap` for current paragraph
@@ -824,7 +831,7 @@ nmap <silent> <A-Left> :wincmd h<CR>
 nmap <silent> <A-Right> :wincmd l<CR>
 nnoremap <silent> <Leader>dd :DBUIToggle<CR>
 
-set conceallevel=0
-set cmdheight=1
+com! -range SortLines exe "!awk '{print length(), $0 | \"sort -n | cut -d\\\  -f2-\"}'"
+" nmap <silent> <Leader>xl :'<,'>! awk '{ print length(), $0 \| "sort -n \| cut -d\\  -f2-" }'<CR>
 
 luafile ~/.config/nvim/lua/config.lua

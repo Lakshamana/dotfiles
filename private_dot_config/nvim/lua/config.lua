@@ -5,14 +5,6 @@ local venv_path = os.getenv('VIRTUAL_ENV') or os.getenv('CONDA_PREFIX')
 
 require('mason-nvim-dap').setup({
   automatic_installation = { 'node2' },
-  handlers = {
-    function(config)
-      -- all sources with no handler get passed here
-
-      -- Keep original functionality
-      require('mason-nvim-dap').default_setup(config)
-    end,
-  },
   automatic_setup = {
     adapters = {
       mix_task = {
@@ -36,7 +28,7 @@ require('mason-nvim-dap').setup({
           task = 'test',
           taskArgs = { '--trace' },
           request = 'launch',
-          startApps = false, -- for Phoenix projects
+          startApps = true, -- for Phoenix projects
           projectDir = '${workspaceFolder}',
           requireFiles = {
             'test/**/test_helper.exs',
@@ -93,15 +85,21 @@ require('mason-nvim-dap').setup({
           console = 'integratedTerminal',
           -- processId = require('dap.utils').pick_process,
           port = 9229,
-          -- skipFiles = {
-          --   '${workspaceFolder}/node_modules/**/*.js',
-          --   '<node_internals>/**/*.js'
-          -- }
+          skipFiles = {
+            '${workspaceFolder}/node_modules/**/*.js',
+            '<node_internals>/**/*.js'
+          }
         }
       }
     }
   }
 })
+
+require'mason-nvim-dap'.setup_handlers {
+  function(s)
+    require('mason-nvim-dap.automatic_setup')(s)
+  end
+}
 
 local dap, dapui = require('dap'), require('dapui')
 dapui.setup()
@@ -181,3 +179,10 @@ function _G.set_terminal_keymaps()
 end
 
 vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
+
+require("indent_blankline").setup {
+    -- for example, context is off by default, use this to turn it on
+    filetype_exclude = { 'text' },
+    show_current_context = false,
+    show_current_context_start = true,
+}
