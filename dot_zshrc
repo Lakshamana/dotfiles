@@ -167,6 +167,7 @@ alias shutdown="sudo systemctl poweroff"
 alias halt="sudo systemctl halt"
 alias icat="kitty +kitten icat"
 alias w3m="w3m -v"
+alias nv="nvim"
 
 # append completions to fpath
 fpath=(${ASDF_DIR}/completions $fpath)

@@ -160,7 +160,9 @@ sudo pacman -Sy \
       polkit \
       ntp \
       ntp-openrc \
-      accountsservice
+      accountsservice \
+      rclone \
+      fuse
 
 log 'configuring NetworkManager...'
 sudo rc-update add NetworkManager default
