@@ -854,3 +854,5 @@ com! -range SortLines exe "!awk '{print length(), $0 | \"sort -n | cut -d\\\  -f
 " nmap <silent> <Leader>xl :'<,'>! awk '{ print length(), $0 \| "sort -n \| cut -d\\  -f2-" }'<CR>
 
 luafile ~/.config/nvim/lua/config.lua
+
+nnoremap <silent> <Leader>nt :NeoAI<CR>
