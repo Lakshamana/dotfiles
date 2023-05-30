@@ -1,6 +1,8 @@
 require('nvim-dap-virtual-text').setup()
 require('mason').setup()
 
+require("neoai").setup()
+
 local venv_path = os.getenv('VIRTUAL_ENV') or os.getenv('CONDA_PREFIX')
 
 require('mason-nvim-dap').setup({
