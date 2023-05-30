@@ -104,6 +104,27 @@ require'mason-nvim-dap'.setup_handlers {
 local dap, dapui = require('dap'), require('dapui')
 dapui.setup()
 
+-- dap.configurations.elixir = {
+--   {
+--     type = 'mix_task',
+--     name = 'mix test',
+--     task = 'test',
+--     taskArgs = { '--trace' },
+--     request = 'launch',
+--     startApps = true, -- for Phoenix projects
+--     projectDir = '${workspaceFolder}',
+--     requireFiles = {
+--       'test/**/test_helper.exs',
+--       'test/**/*_test.exs',
+--     },
+--   }
+-- }
+--
+-- dap.adapters.mix_task = {
+--   type = 'executable',
+--   command = 'elixir-ls-debugger'
+-- }
+
 dap.listeners.after.event_initialized['dapui_config'] = function()
   dapui.open()
 end

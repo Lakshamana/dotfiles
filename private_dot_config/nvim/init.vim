@@ -92,11 +92,27 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && chmod +x ./install.sh &&
 Plug 'bingaman/vim-sparkup'
 Plug 'tpope/vim-dadbod'
 Plug 'kristijanhusak/vim-dadbod-ui'
+Plug 'kristijanhusak/vim-dadbod-completion'
 Plug 'github/copilot.vim', { 'do': ':Copilot setup' }
 Plug 'inkarkat/vim-advancedsorters'
+Plug 'Exafunction/codeium.vim'
+Plug 'MunifTanjim/nui.nvim'
+Plug 'Bryley/neoai.nvim'
 call plug#end()
 
 let g:db_ui_use_nerd_fonts = 1
+
+let g:blamer_show_in_insert_modes = 0
+
+let g:airline_section_y = '{…}%3{codeium#GetStatusString()}'
+
+let g:codeium_no_map_tab = 1
+imap <script><silent><nowait><expr> <C-n> codeium#Accept()
+imap <C-;>   <Cmd>call codeium#CycleCompletions(1)<CR>
+imap <C-,>   <Cmd>call codeium#CycleCompletions(-1)<CR>
+imap <C-x>   <Cmd>call codeium#Clear()<CR>
+
+"let g:codeium_enabled = v:false
 
 let g:vimtex_view_method = 'zathura'
 let g:vimtex_compiler_latexmk = { 
@@ -124,6 +140,9 @@ let g:vimtex_quickfix_ignore_filters = [
 "   \ },
 "   \ 'cache_enabled': 0
 " \}
+
+let g:vim_dadbod_completion_force_context = 1
+autocmd FileType sql setlocal omnifunc=vim_dadbod_completion#omni
 
 tnoremap <silent> <C-q> <C-\><C-n>
 

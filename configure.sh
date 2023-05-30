@@ -203,7 +203,12 @@ yay -Sy \
       ttf-nerd-fonts-symbols-2048-em \
       ttf-nerd-fonts-symbols-common \
       powerline-console-fonts \
-      picom-git
+      picom-git \
+      noise-suppression-for-voice
+
+# reload pipewire
+log 'reloading pipewire...'
+sudo rc-service pipewire restart
 
 log 'adding temporarily asdf to $PATH'
 export PATH=$PATH:/opt/asdf-vm/bin
