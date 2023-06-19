@@ -164,7 +164,8 @@ sudo pacman -Sy \
       rclone \
       fuse \
       fuse3 \
-      ladspa
+      ladspa \
+      ttf-joypixels
 
 log 'configuring NetworkManager...'
 sudo rc-update add NetworkManager default
