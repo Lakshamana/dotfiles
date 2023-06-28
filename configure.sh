@@ -162,7 +162,8 @@ sudo pacman -Sy \
       ntp-openrc \
       accountsservice \
       rclone \
-      fuse
+      fuse \
+      fuse3
 
 log 'configuring NetworkManager...'
 sudo rc-update add NetworkManager default
