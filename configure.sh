@@ -163,7 +163,8 @@ sudo pacman -Sy \
       accountsservice \
       rclone \
       fuse \
-      fuse3
+      fuse3 \
+      ladspa
 
 log 'configuring NetworkManager...'
 sudo rc-update add NetworkManager default
