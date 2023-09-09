@@ -95,27 +95,30 @@ Plug 'kristijanhusak/vim-dadbod-ui'
 Plug 'kristijanhusak/vim-dadbod-completion'
 Plug 'github/copilot.vim', { 'do': ':Copilot setup' }
 Plug 'inkarkat/vim-advancedsorters'
-Plug 'Exafunction/codeium.vim'
 Plug 'MunifTanjim/nui.nvim'
 Plug 'Bryley/neoai.nvim'
+Plug 'tpope/vim-abolish'
 call plug#end()
+
+let g:sneak#label = 1
 
 let g:db_ui_use_nerd_fonts = 1
 
 let g:blamer_show_in_insert_modes = 0
 
-let g:airline_section_y = '{…}%3{codeium#GetStatusString()}'
+highlight CopilotSuggestion guifg=#555555 ctermfg=8
 
-let g:codeium_no_map_tab = 1
-imap <script><silent><nowait><expr> <C-n> codeium#Accept()
-imap <C-;>   <Cmd>call codeium#CycleCompletions(1)<CR>
-imap <C-,>   <Cmd>call codeium#CycleCompletions(-1)<CR>
-imap <C-x>   <Cmd>call codeium#Clear()<CR>
+let g:copilot_no_tab_map = v:true
+imap <silent><script><expr> <C-n> copilot#Accept("\<CR>")
+imap <C-;> <Cmd>call copilot#Next()<CR>
+imap <C-,> <Cmd>call copilot#Previous()<CR>
+imap <C-x> <Cmd>call copilot#Clear()<CR>
+imap <C-Enter> <Cmd>call copilot#Suggest()<CR>
 
 "let g:codeium_enabled = v:false
 
 let g:vimtex_view_method = 'zathura'
-let g:vimtex_compiler_latexmk = { 
+let g:vimtex_compiler_latexmk = {
         \ 'executable' : 'latexmk',
         \ 'options' : [ 
         \   '-xelatex',
