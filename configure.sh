@@ -165,7 +165,9 @@ sudo pacman -Sy \
       fuse \
       fuse3 \
       ladspa \
-      ttf-joypixels
+      ttf-joypixels \
+      xautolock \
+      inotify-tools
 
 log 'configuring NetworkManager...'
 sudo rc-update add NetworkManager default
@@ -232,13 +234,6 @@ pip install neovim
 
 log 'install i3ipc module...'
 pip install i3ipc
-
-log 'downloading vim-plug now...'
-sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
-       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-nvim -c ':source ~/.config/nvim/init.vim'
-nvim -c ':PlugInstall'
-log 'nvim plugins successfully installed...'
 
 # check npm
 npm -v
