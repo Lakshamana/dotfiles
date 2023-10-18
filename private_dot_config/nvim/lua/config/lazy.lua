@@ -18,7 +18,6 @@ require("lazy").setup({
     { import = "lazyvim.plugins.extras.lang.json" },
     { import = "lazyvim.plugins.extras.ui.mini-animate" },
     { import = "lazyvim.plugins.extras.coding.copilot" },
-    { import = "lazyvim.plugins.extras.formatting.conform" },
     { import = "lazyvim.plugins.extras.formatting.prettier" },
     { import = "lazyvim.plugins.extras.dap.core" },
 
@@ -40,20 +39,6 @@ require("lazy").setup({
       "folke/tokyonight.nvim",
       lazy = true,
       opts = { style = "night" },
-    },
-    {
-      "folke/flash.nvim",
-      enabled = false,
-      -- --@type Flash.Config
-      -- event = "VeryLazy",
-      -- keys = {
-      --   { "s", false },
-      --   { "S", false },
-      --   { "/", mode = { "n", "o", "x" }, function() require("flash").jump() end, desc = "Flash Treesitter", },
-      -- },
-      -- opts = {
-      --   prompt = { enabled = false }
-      -- }
     },
   },
   defaults = {
@@ -84,10 +69,17 @@ require("lazy").setup({
   },
 })
 
-local lspconfig = require('lspconfig')
-local configs = require('lspconfig/configs')
+local lspconfig = require("lspconfig")
+local configs = require("lspconfig/configs")
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+lspconfig.eslint.setup({
+  capabilities = capabilities,
+  settings = {
+    nodePath = os.getenv("HOME") .. "/.local/share/nvim/mason/packages/eslint/node_modules"
+  }
+})
 
 lspconfig.emmet_ls.setup({
   -- on_attach = on_attach,
@@ -105,7 +97,7 @@ lspconfig.emmet_ls.setup({
     "pug",
     "typescriptreact",
     "vue",
-    "heex"
+    "heex",
   },
   init_options = {
     html = {
@@ -114,5 +106,5 @@ lspconfig.emmet_ls.setup({
         ["bem.enabled"] = true,
       },
     },
-  }
+  },
 })

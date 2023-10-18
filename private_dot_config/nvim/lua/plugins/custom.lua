@@ -1,5 +1,3 @@
-local dapui = require("dapui")
-
 return {
   { "ellisonleao/gruvbox.nvim" },
 
@@ -31,56 +29,25 @@ return {
   },
 
   {
-    "akinsho/toggleterm.nvim",
-    version = "*",
-    lazy = false,
-    opts = {
-      size = function(term)
-        if term.direction == "horizontal" then
-          return 10
-        elseif term.direction == "vertical" then
-          return vim.o.columns * 0.4
-        end
-      end,
-      open_mapping = [[<c-\>]],
-      hide_numbers = true, -- hide the number column in toggleterm buffers
-      shade_filetypes = {},
-      shade_terminals = true,
-      shading_factor = 3, -- the degree by which to darken to terminal colour, default: 1 for dark backgrounds, 3 for light
-      start_in_insert = true,
-      insert_mappings = true, -- whether or not the open mapping applies in insert mode
-      persist_size = true,
-      direction = "vertical",
-      close_on_exit = true, -- close the terminal window when the process exits
-      shell = vim.o.shell, -- change the default shell
-      -- This field is only relevant if direction is set to 'float'
-      float_opts = {
-        -- The border key is *almost* the same as 'nvim_open_win'
-        -- see :h nvim_open_win for details on borders however
-        -- the 'curved' border is a custom border type
-        -- not natively supported but implemented in this plugin.
-        border = "single",
-        width = 50,
-        height = 10,
-        winblend = 3,
-        highlights = {
-          border = "Normal",
-          background = "Normal",
-        },
-      },
-    },
-  },
-
-  {
     "nvim-telescope/telescope.nvim",
     keys = {
-      { "<leader>gs", vim.NIL },
+      { "<leader>gs", false },
+      {
+        "<leader>sB",
+        function ()
+          require('telescope.builtin').live_grep({
+          grep_open_files = true
+        })
+        end,
+        desc = "Search in buffers"
+      }
     },
   },
 
   {
     "ggandor/flit.nvim",
     enabled = true,
+    dependencies = { "ggandor/leap.nvim" },
     keys = function()
       ---@type LazyKeys[]
       local ret = {}
@@ -93,128 +60,138 @@ return {
   },
 
   {
-    "ggandor/leap.nvim",
+    "folke/flash.nvim",
     enabled = true,
+    --@type Flash.Config
+    event = "VeryLazy",
+    keys = {
+      {
+        "s",
+        mode = { "n", "x", "o" },
+        false,
+      },
+      {
+        "S",
+        mode = { "n", "x", "o" },
+        false,
+      },
+      {
+        "r",
+        mode = "o",
+        false,
+      },
+      {
+        "R",
+        mode = { "o", "x" },
+        false,
+      },
+      {
+        "<c-s>",
+        mode = { "c" },
+        false,
+      },
+    },
+    opts = {
+      modes = {
+        char = { enabled = false }
+      },
+      label = {
+        rainbow = { enabled = true }
+      }
+    },
   },
 
   {
-    "jay-babu/mason-nvim-dap.nvim",
-    dependencies = "mason.nvim",
-    cmd = { "DapInstall", "DapUninstall" },
-    opts = {
-      automatic_installation = { "node2" },
-      automatic_setup = {
-        adapters = {
-          mix_task = {
-            type = "executable",
-            command = "elixir-ls-debugger",
-          },
-          python = {
-            type = "executable",
-            command = "debugpy-adapter",
-          },
-          node2 = {
-            type = "executable",
-            command = "node-debug2-adapter",
+    "mfussenegger/nvim-dap",
+    keys = {
+      { "<leader>do", function() require("dap").step_over() end, desc = "Step Over" },
+      { "<leader>dO", function() require("dap").step_out() end, desc = "Step Out" },
+    },
+    dependencies = {
+      {
+        "rcarriga/nvim-dap-ui",
+        -- stylua: ignore
+        keys = {
+          { "<leader>du", function() require("dapui").toggle({ }) end, desc = "Dap UI" },
+          { "<leader>de", function() require("dapui").eval() end, desc = "Eval", mode = {"n", "v"} },
+          { "<leader>dS", function() require("dap").session() end, desc = "Session" },
+          {
+            "<leader>ds",
+            function()
+              local widgets = require('dap.ui.widgets')
+              widgets.centered_float(widgets.scopes)
+            end,
+            desc = "Scopes"
           },
         },
-        configurations = {
-          elixir = {
-            {
-              type = "mix_task",
-              name = "mix test",
-              task = "test",
-              taskArgs = { "--trace" },
-              request = "launch",
-              startApps = true, -- for Phoenix projects projectDir = "${workspaceRoot}",
-              requireFiles = {
-                "test/**/test_helper.exs",
-                "test/**/*_test.exs",
-              },
-            },
-          },
-          python = {
-            {
-              type = "python", -- the type here established the link to the adapter definition: `dap.adapters.python`
-              request = "launch",
-              name = "Python: Launch file",
-              program = "${file}", -- This configuration will launch the current file if used.
-              pythonPath = venv_path and (venv_path .. "/bin/python") or nil,
-            },
-            {
-              type = "python",
-              name = "Python: Attach",
-              request = "attach",
-              justMyCode = true,
-              connect = {
-                host = "127.0.0.1",
-                port = 5678,
-              },
-              pathMappings = {
+        opts = {},
+        config = function(_, opts)
+          -- setup dap config by VsCode launch.json file
+          -- require("dap.ext.vscode").load_launchjs()
+
+          local dap = require("dap")
+          require("dapui").setup(opts)
+          dap.listeners.after.event_initialized["dapui_config"] = function()
+            require("dapui").open({})
+          end
+          dap.listeners.before.event_terminated["dapui_config"] = function()
+            require("dapui").close({})
+          end
+          dap.listeners.before.event_exited["dapui_config"] = function()
+            require("dapui").close({})
+          end
+        end,
+      },
+      {
+        "jay-babu/mason-nvim-dap.nvim",
+        dependencies = "mason.nvim",
+        cmd = { "DapInstall", "DapUninstall" },
+        opts = {
+          automatic_installation = { "node2" },
+          handlers = {
+            function(config)
+              require("mason-nvim-dap").default_setup(config)
+            end,
+            node2 = function(config)
+              config.adapters = {
+                type = "executable",
+                command = "node-debug2-adapter",
+              }
+              config.configurations = {
                 {
-                  localRoot = "${workspaceFolder}",
-                  remoteRoot = ".",
+                  name = "Node2: Launch",
+                  type = "node2",
+                  request = "launch",
+                  program = "${file}",
+                  cwd = vim.fn.getcwd(),
+                  sourceMaps = true,
+                  protocol = "inspector",
+                  console = "integratedTerminal",
+                  skipFiles = {
+                    "${workspaceFolder}/node_modules/**/*.js",
+                    "<node_internals>/**/*.js",
+                  },
                 },
-              },
-            },
-          },
-          node2 = {
-            {
-              name = "Node2: Launch",
-              type = "node2",
-              request = "launch",
-              program = "${file}",
-              cwd = vim.fn.getcwd(),
-              sourceMaps = true,
-              protocol = "inspector",
-              console = "integratedTerminal",
-              skipFiles = {
-                "${workspaceFolder}/node_modules/**/*.js",
-                "<node_internals>/**/*.js",
-              },
-            },
-            {
-              -- For this to work you need to make sure the node process is started with the `--inspect` flag.
-              name = "Node2: Attach to process",
-              type = "node2",
-              request = "attach",
-              protocol = "inspector",
-              console = "integratedTerminal",
-              -- processId = require('dap.utils').pick_process,
-              port = 9229,
-              skipFiles = {
-                "${workspaceFolder}/node_modules/**/*.js",
-                "<node_internals>/**/*.js",
-              },
-            },
+                {
+                  -- For this to work you need to make sure the node process is started with the `--inspect` flag.
+                  name = "Node2: Attach to process (!)",
+                  type = "node2",
+                  request = "attach",
+                  protocol = "inspector",
+                  console = "integratedTerminal",
+                  -- processId = require('dap.utils').pick_process,
+                  port = 9229,
+                  skipFiles = {
+                    "${workspaceFolder}/node_modules/**/*.js",
+                    "<node_internals>/**/*.js",
+                  },
+                },
+              }
+              require("mason-nvim-dap").default_setup(config) -- don't forget this!
+            end,
           },
         },
       },
     },
-  },
-
-  {
-    "rcarriga/nvim-dap-ui",
-    -- stylua: ignore
-    keys = {
-      { "<leader>du", function() dapui.toggle({ }) end, desc = "Dap UI" },
-      { "<leader>de", function() dapui.eval() end, desc = "Eval", mode = {"n", "v"} },
-    },
-    opts = {},
-    config = function(_, opts)
-      -- setup dap config by VsCode launch.json file
-      -- require("dap.ext.vscode").load_launchjs()
-      local dap = require("dap")
-      dapui.setup(opts)
-      dap.listeners.after.event_initialized["dapui_config"] = function()
-        dapui.open({})
-      end
-      dap.listeners.before.event_terminated["dapui_config"] = function()
-        dapui.close({})
-      end
-      dap.listeners.before.event_exited["dapui_config"] = function()
-        dapui.close({})
-      end
-    end,
   },
 }
