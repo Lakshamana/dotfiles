@@ -1,21 +1,25 @@
 # If you come from bash you might have to change your $PATH.
 export ASDF_DIR=/opt/asdf-vm
-export PATH=$HOME/bin:/usr/local/bin:~/.scripts:$PATH:$ASDF_DIR/bin:~/.local/bin
+export PATH=$HOME/bin:/usr/local/bin:~/.scripts:$PATH:$ASDF_DIR/bin:~/.local/bin:$HOME/.asdf/installs/rust/1.72.0/bin
 export SUDO_ASKPASS=/sbin/xaskpass
 export SSH_ASKPASS=/sbin/xaskpass
 
 source ~/.zplug/init.zsh
+source /usr/share/nvm/init-nvm.sh
 
 # Path to your oh-my-zsh installation.
 export ZSH="/home/$USER/.oh-my-zsh"
 export EDITOR='nvim'
+export OPENAI_API_KEY=`cat ~/.openai_key`
 
 # export $BROWSER
 export BROWSER="/usr/bin/microsoft-edge-beta"
 
+export OPENAI_API_KEY="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"
+
 export CLOUDSDK_PYTHON=python2
 
-export OPENAI_API_KEY=`cat ~/.openai_key`
+export ERL_AFLAGS="-kernel shell_history enabled shell_history_path '\"$HOME/.erlang-history\"'"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -170,12 +174,12 @@ alias halt="sudo systemctl halt"
 alias icat="kitty +kitten icat"
 alias w3m="w3m -v"
 alias nv="nvim"
+alias f="fff"
 
 # append completions to fpath
 fpath=(${ASDF_DIR}/completions $fpath)
 # initialise completions with ZSH's compinit
-autoload -Uz compinit && compinit
-autoload -Uz bashcompinit && bashcompinit
+autoload -Uz compinit
 
 ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg[green]%}:: "
 ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
@@ -187,8 +191,3 @@ PROMPT='$THEME_PROMPT_PREFIX%f%B%F{240}%1~ %f%b$(git_prompt_info)%(?.%F{green}$T
 fpath+=~/.zfunc
 compinit
 zplug load
-
-# pnpm
-export PNPM_HOME="/home/arjuna/.local/share/pnpm"
-export PATH="$PNPM_HOME:$PATH"
-# pnpm end

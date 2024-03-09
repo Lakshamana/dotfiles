@@ -1,6 +1,16 @@
 return {
   { "ellisonleao/gruvbox.nvim" },
 
+  -- { "Issafalcon/lsp-overloads.nvim" },
+
+  -- { "ray-x/lsp_signature.nvim" },
+
+  -- {
+  --   "pmizio/typescript-tools.nvim",
+  --   dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+  --   opts = {},
+  -- },
+
   {
     "kristijanhusak/vim-dadbod-ui",
     keys = {
@@ -29,18 +39,43 @@ return {
   },
 
   {
+    "jackMort/ChatGPT.nvim",
+    event = "VeryLazy",
+    config = function()
+      require("chatgpt").setup({
+        api_key_cmd = "gpg -d " .. vim.fn.expand("$HOME") .. "/openai.secret.gpg",
+      })
+    end,
+    dependencies = {
+      "MunifTanjim/nui.nvim",
+      "nvim-lua/plenary.nvim",
+      "nvim-telescope/telescope.nvim",
+    },
+  },
+
+  {
     "nvim-telescope/telescope.nvim",
     keys = {
       { "<leader>gs", false },
       {
         "<leader>sB",
-        function ()
-          require('telescope.builtin').live_grep({
-          grep_open_files = true
-        })
+        function()
+          require("telescope.builtin").live_grep({
+            grep_open_files = true,
+          })
         end,
-        desc = "Search in buffers"
-      }
+        desc = "Search in buffers",
+      },
+      {
+        "<leader>sS",
+        function()
+          require("telescope.builtin").lsp_workspace_symbols({
+            query = vim.fn.expand("<cword>"),
+          })
+        end,
+        mode = { "v" },
+        desc = "Search for selected Symbol (Workspace)",
+      },
     },
   },
 
@@ -93,19 +128,31 @@ return {
     },
     opts = {
       modes = {
-        char = { enabled = false }
+        char = { enabled = false },
       },
       label = {
-        rainbow = { enabled = true }
-      }
+        rainbow = { enabled = true },
+      },
     },
   },
 
   {
     "mfussenegger/nvim-dap",
     keys = {
-      { "<leader>do", function() require("dap").step_over() end, desc = "Step Over" },
-      { "<leader>dO", function() require("dap").step_out() end, desc = "Step Out" },
+      {
+        "<leader>do",
+        function()
+          require("dap").step_over()
+        end,
+        desc = "Step Over",
+      },
+      {
+        "<leader>dO",
+        function()
+          require("dap").step_out()
+        end,
+        desc = "Step Out",
+      },
     },
     dependencies = {
       {
@@ -130,6 +177,32 @@ return {
           -- require("dap.ext.vscode").load_launchjs()
 
           local dap = require("dap")
+          dap.configurations.elixir = {
+            {
+              type = "mix_task",
+              name = "Attach",
+              request = "launch",
+              command = "iex -S mix phx.server",
+              -- task = "phx.server",
+              projectDir = "${workspaceFolder}",
+            },
+            {
+              type = "mix_task",
+              name = "Launch",
+              task = "run",
+              taskArgs = {},
+              request = "launch",
+              startApps = false,
+              projectDir = "${workspaceFolder}",
+            },
+          }
+
+          dap.adapters.mix_task = {
+            type = "executable",
+            command = "elixir-ls-debugger",
+            args = {},
+          }
+
           require("dapui").setup(opts)
           dap.listeners.after.event_initialized["dapui_config"] = function()
             require("dapui").open({})
@@ -159,7 +232,7 @@ return {
               }
               config.configurations = {
                 {
-                  name = "Node2: Launch",
+                  name = "1: Launch",
                   type = "node2",
                   request = "launch",
                   program = "${file}",
@@ -174,7 +247,7 @@ return {
                 },
                 {
                   -- For this to work you need to make sure the node process is started with the `--inspect` flag.
-                  name = "Node2: Attach to process (!)",
+                  name = "2: Attach to process",
                   type = "node2",
                   request = "attach",
                   protocol = "inspector",

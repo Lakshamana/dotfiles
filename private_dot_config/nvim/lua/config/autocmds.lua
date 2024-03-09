@@ -8,9 +8,20 @@ vim.api.nvim_create_autocmd({ "InsertLeave", "TextChanged", "FocusLost" }, {
   group = autosave_grp,
 })
 
+local cmp = require("cmp") -- must have this
+
+local autocomplete_group = vim.api.nvim_create_augroup("vimrc_autocompletion", { clear = true })
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = "mysql,sql,plsql",
+  pattern = { "sql", "mysql", "plsql" },
   callback = function()
-    require("cmp").setup.buffer({ sources = { { name = "vim-dadbod-completion" } } })
+    cmp.setup.buffer({
+      sources = {
+        { name = "vim-dadbod-completion" },
+        { name = "buffer" },
+        { name = "vsnip" },
+      },
+    })
   end,
+  group = autocomplete_group,
 })
+

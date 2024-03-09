@@ -162,12 +162,7 @@ sudo pacman -Sy \
       ntp-openrc \
       accountsservice \
       rclone \
-      fuse \
-      fuse3 \
-      ladspa \
-      ttf-joypixels \
-      xautolock \
-      inotify-tools
+      fuse
 
 log 'configuring NetworkManager...'
 sudo rc-update add NetworkManager default

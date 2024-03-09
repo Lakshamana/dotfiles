@@ -42,4 +42,6 @@ pipewire &
 pipewire-pulse &
 wireplumber &
 
+xset -dpms
+
 exec i3
