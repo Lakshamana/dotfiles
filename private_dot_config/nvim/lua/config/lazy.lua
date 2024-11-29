@@ -1,4 +1,5 @@
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+
 if not vim.loop.fs_stat(lazypath) then
   -- bootstrap lazy.nvim
   -- stylua: ignore
@@ -14,10 +15,16 @@ vim.api.nvim_create_user_command("W", "w !sudo tee >/dev/null %:p:S", { bang = t
 require("lazy").setup({
   spec = {
     -- add LazyVim and import its plugins
-    { "LazyVim/LazyVim", import = "lazyvim.plugins" },
+    {
+      "LazyVim/LazyVim",
+      import = "lazyvim.plugins",
+      opts = { colorscheme = "cyberdream" },
+    },
     -- import any extras modules here
-    { import = "lazyvim.plugins.extras.lang.typescript" },
+    -- { import = "lazyvim.plugins.extras.lang.typescript" },
     { import = "lazyvim.plugins.extras.lang.elixir" },
+    { import = "lazyvim.plugins.extras.lang.go" },
+    { import = "lazyvim.plugins.extras.lang.rust" },
     { import = "lazyvim.plugins.extras.lang.json" },
     { import = "lazyvim.plugins.extras.ui.mini-animate" },
     { import = "lazyvim.plugins.extras.coding.copilot" },
@@ -36,7 +43,6 @@ require("lazy").setup({
     "tpope/vim-abolish",
     "mg979/vim-visual-multi",
     "jiangmiao/auto-pairs",
-    "andymass/vim-matchup",
     "f-person/git-blame.nvim",
     "makerj/vim-pdf",
     { import = "plugins" },
@@ -46,9 +52,53 @@ require("lazy").setup({
       lazy = true,
       opts = { style = "night" },
     },
+    "rafi/awesome-vim-colorschemes",
+    {
+      "scottmckendry/cyberdream.nvim",
+      config = function()
+        require("cyberdream").setup({
+          -- Enable transparent background
+          transparent = true,
+
+          -- Enable italics comments
+          italic_comments = true,
+
+          -- Replace all fillchars with ' ' for the ultimate clean look
+          hide_fillchars = false,
+
+          -- Modern borderless telescope theme
+          borderless_telescope = true,
+
+          -- Set terminal colors used in `:terminal`
+          terminal_colors = true,
+
+          theme = {
+            variant = "default", -- use "light" for the light variant
+            highlights = {
+              -- Highlight groups to override, adding new groups is also possible
+              -- See `:h highlight-groups` for a list of highlight groups or run `:hi` to see all groups and their current values
+
+              -- Example:
+              Comment = { fg = "#696969", bg = "NONE", italic = true },
+
+              -- Complete list can be found in `lua/cyberdream/theme.lua`
+            },
+
+            -- Override a color entirely
+            colors = {
+              -- For a list of colors see `lua/cyberdream/colours.lua`
+              -- Example:
+              bg = "#000000",
+              green = "#00ff00",
+              magenta = "#ff00ff",
+            },
+          },
+        })
+      end,
+    },
   },
   defaults = {
-    -- By default, only LazyVim plugins will be lazy-loaded. Your custom plugins will load during startup.
+    -- By default, only Lazyim plugins will be lazy-loaded. Your custom plugins will load during startup.
     -- If you know what you're doing, you can set this to `true` to have all your custom plugins lazy-loaded by default.
     lazy = false,
     -- It's recommended to leave version=false for now, since a lot the plugin that support versioning,
@@ -56,7 +106,7 @@ require("lazy").setup({
     version = false, -- always use the latest git commit
     -- version = "*", -- try installing the latest stable version for plugins that support semver
   },
-  install = { colorscheme = { "tokyonight-night" } },
+  install = { colorscheme = { "cyberdream", "tokyonight" } },
   checker = { enabled = true }, -- automatically check for plugin updates
   performance = {
     rtp = {
@@ -78,13 +128,6 @@ require("lazy").setup({
 local lspconfig = require("lspconfig")
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
-
-lspconfig.eslint.setup({
-  capabilities = capabilities,
-  settings = {
-    nodePath = os.getenv("HOME") .. "/.local/share/nvim/mason/packages/eslint/node_modules",
-  },
-})
 
 lspconfig.emmet_language_server.setup({
   filetypes = {
@@ -147,22 +190,14 @@ lspconfig.tailwindcss.setup({
   },
 })
 
--- local servers = require("mason-lspconfig").get_installed_servers()
--- for _, server in ipairs(servers) do
---   lspconfig[server].setup({
---     on_attach = function(client, bufnr)
---       if client.server_capabilities.signatureHelpProvider then
---         require("lsp_signature").setup({
---           hint_prefix = ""
---         })
---
---         vim.keymap.set({ "n" }, "<Leader>k", function()
---           vim.lsp.buf.signature_help()
---         end, { silent = true, noremap = true, desc = "Toggle signature" })
---       end
---     end,
---   })
--- end
+lspconfig.ts_ls.setup({
+  capabilities = capabilities,
+  settings = {
+    preferences = {
+      includeInlayParameterNameHints = "all",
+    },
+  },
+})
 
 require("which-key").register({
   C = {
@@ -183,10 +218,8 @@ require("which-key").register({
   },
 }, { prefix = "<leader>" })
 
-require("noice").setup({
-  lsp = {
-    signature = {
-      enabled = false,
-    },
+require("nvim-tree").setup({
+  update_focused_file = {
+    enable = true,
   },
 })

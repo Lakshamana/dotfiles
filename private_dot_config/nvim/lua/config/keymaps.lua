@@ -22,3 +22,5 @@ vim.api.nvim_set_keymap("n", "<Leader>gb", ":Git branch<Space>", { noremap = tru
 vim.api.nvim_set_keymap("n", "<Leader>go", ":Telescope git_branches<CR>", { noremap = true })
 vim.api.nvim_set_keymap("n", "<Leader>gps", ":Git push<CR>", { noremap = true })
 vim.api.nvim_set_keymap("n", "<Leader>gpl", ":Git pull<CR>", { noremap = true })
+
+vim.api.nvim_set_keymap("i", "<c-c>", "<esc>", { noremap = true })
