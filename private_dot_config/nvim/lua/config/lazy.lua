@@ -26,8 +26,8 @@ require("lazy").setup({
     { import = "lazyvim.plugins.extras.lang.go" },
     { import = "lazyvim.plugins.extras.lang.rust" },
     { import = "lazyvim.plugins.extras.lang.json" },
-    { import = "lazyvim.plugins.extras.ui.mini-animate" },
-    { import = "lazyvim.plugins.extras.coding.copilot" },
+    -- { import = "lazyvim.plugins.extras.ui.indent-blankline" },
+    -- { import = "lazyvim.plugins.extras.coding.copilot" },
     { import = "lazyvim.plugins.extras.formatting.prettier" },
     { import = "lazyvim.plugins.extras.dap.core" },
 
@@ -42,11 +42,10 @@ require("lazy").setup({
     "tpope/vim-surround",
     "tpope/vim-abolish",
     "mg979/vim-visual-multi",
-    "jiangmiao/auto-pairs",
+    -- "jiangmiao/auto-pairs",
     "f-person/git-blame.nvim",
     "makerj/vim-pdf",
     { import = "plugins" },
-    "tpope/vim-fugitive",
     {
       "folke/tokyonight.nvim",
       lazy = true,

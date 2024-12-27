@@ -28,80 +28,46 @@ return {
   },
 
   {
-    "uga-rosa/ccc.nvim",
-    enabled = false,
-    config = function()
-      vim.opt.termguicolors = true
-
-      local ccc = require("ccc")
-
-      ccc.setup({
-        -- Your preferred settings
-        -- Example: enable highlighter
-        highlighter = {
-          auto_enable = true,
-          lsp = true,
-        },
-      })
-    end,
-  },
-
-  {
     "andymass/vim-matchup",
     enabled = true,
     opts = {},
   },
 
   {
-    "lukas-reineke/indent-blankline.nvim",
-    main = "ibl",
-    commit = "3d08501",
-    config = function()
-      require("ibl").setup({
-        enabled = true,
+    "folke/snacks.nvim",
+    ---@class snacks.indent.Config
+    ---@field enabled? boolean
+    opts = {
+      gitbrowse = {
+        enabled = true
+      },
+      indent = {
         indent = {
+          -- your indent configuration comes here
+          -- or leave it empty to use the default settings
+          -- refer to the configuration section below
+          enabled = true,
           char = "▏",
         },
-        exclude = {
-          filetypes = {
-            "help",
-            "neo-tree",
-            "notify",
-            "text",
-          },
-        },
-      })
-
-      -- local hooks = require("ibl.hooks")
-      -- hooks.register(hooks.type.WHITESPACE, hooks.builtin.hide_first_space_indent_level)
-    end,
+        scope = {
+          enabled = true,
+          underline = true,
+          char = "▏",
+        }
+      }
+    },
   },
 
   {
-    "hrsh7th/nvim-cmp",
-    dependencies = {
-      "hrsh7th/cmp-nvim-lsp",
-      {
-        "MattiasMTS/cmp-dbee",
-        commit = "0feabc1", --completion works using this commit
-        dependencies = {
-          { "kndndrj/nvim-dbee" },
-        },
-        ft = "sql",
-        opts = {},
-        config = function()
-          require("cmp-dbee").setup({
-            default_connection = nil,
-          })
-        end,
+    "echasnovski/mini.pairs",
+    event = "VeryLazy",
+    opts = {
+      mappings = {
+        [' '] = { action = 'open', pair = '  ', neigh_pattern = '[%(%[{][%)%]}]' },
+        ['<'] = { action = 'open', pair = '<>' },
+        ['>'] = { action = 'close', pair = '<>' },
       },
-    },
-    config = function(_, opts)
-      table.insert(opts.sources, 1, { name = "cmp-dbee" })
-      table.insert(opts.sources, 1, { name = "nvim_lsp", keyword_length = 1 })
-
-      require("cmp").setup(opts)
-    end,
+    }
   },
 
   {
@@ -448,9 +414,9 @@ return {
           }
 
           require("dapui").setup(opts)
-          dap.listeners.after.event_initialized["dapui_config"] = function()
-            require("dapui").open({})
-          end
+          -- dap.listeners.after.event_initialized["dapui_config"] = function()
+          --   require("dapui").open({})
+          -- end
           dap.listeners.before.event_terminated["dapui_config"] = function()
             require("dapui").close({})
           end

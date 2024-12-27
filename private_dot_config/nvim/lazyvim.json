@@ -1,9 +1,12 @@
 {
   "extras": [
-    "lazyvim.plugins.extras.lang.go"
+    "lazyvim.plugins.extras.editor.outline",
+    "lazyvim.plugins.extras.editor.telescope",
+    "lazyvim.plugins.extras.lang.go",
+    "lazyvim.plugins.extras.ui.mini-indentscope"
   ],
   "news": {
-    "NEWS.md": "7429"
+    "NEWS.md": "10960"
   },
   "version": 7
 }
