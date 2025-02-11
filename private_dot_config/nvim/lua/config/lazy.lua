@@ -21,13 +21,10 @@ require("lazy").setup({
       opts = { colorscheme = "cyberdream" },
     },
     -- import any extras modules here
-    -- { import = "lazyvim.plugins.extras.lang.typescript" },
     { import = "lazyvim.plugins.extras.lang.elixir" },
     { import = "lazyvim.plugins.extras.lang.go" },
     { import = "lazyvim.plugins.extras.lang.rust" },
     { import = "lazyvim.plugins.extras.lang.json" },
-    -- { import = "lazyvim.plugins.extras.ui.indent-blankline" },
-    -- { import = "lazyvim.plugins.extras.coding.copilot" },
     { import = "lazyvim.plugins.extras.formatting.prettier" },
     { import = "lazyvim.plugins.extras.dap.core" },
 
@@ -42,7 +39,6 @@ require("lazy").setup({
     "tpope/vim-surround",
     "tpope/vim-abolish",
     "mg979/vim-visual-multi",
-    -- "jiangmiao/auto-pairs",
     "f-person/git-blame.nvim",
     "makerj/vim-pdf",
     { import = "plugins" },
@@ -54,43 +50,69 @@ require("lazy").setup({
     "rafi/awesome-vim-colorschemes",
     {
       "scottmckendry/cyberdream.nvim",
-      config = function()
+      config = function ()
         require("cyberdream").setup({
+          -- Set light or dark variant
+          variant = "default", -- use "light" for the light variant. Also accepts "auto" to set dark or light colors based on the current value of `vim.o.background`
+
           -- Enable transparent background
-          transparent = true,
+          transparent = false,
+
+          -- Reduce the overall saturation of colours for a more muted look
+          saturation = 1, -- accepts a value between 0 and 1. 0 will be fully desaturated (greyscale) and 1 will be the full color (default)
 
           -- Enable italics comments
-          italic_comments = true,
+          italic_comments = false,
 
           -- Replace all fillchars with ' ' for the ultimate clean look
           hide_fillchars = false,
 
-          -- Modern borderless telescope theme
-          borderless_telescope = true,
+          -- Apply a modern borderless look to pickers like Telescope, Snacks Picker & Fzf-Lua
+          borderless_pickers = false,
 
           -- Set terminal colors used in `:terminal`
           terminal_colors = true,
 
-          theme = {
-            variant = "default", -- use "light" for the light variant
-            highlights = {
-              -- Highlight groups to override, adding new groups is also possible
-              -- See `:h highlight-groups` for a list of highlight groups or run `:hi` to see all groups and their current values
+          -- Improve start up time by caching highlights. Generate cache with :CyberdreamBuildCache and clear with :CyberdreamClearCache
+          cache = false,
 
-              -- Example:
-              Comment = { fg = "#696969", bg = "NONE", italic = true },
+          -- Override highlight groups with your own colour values
+          highlights = {
+            -- Highlight groups to override, adding new groups is also possible
+            -- See `:h highlight-groups` for a list of highlight groups or run `:hi` to see all groups and their current values
 
-              -- Complete list can be found in `lua/cyberdream/theme.lua`
-            },
+            -- Example:
+            Comment = { fg = "#696969", bg = "NONE", italic = true },
+            LspInlayHint = { fg = "#6d6d6d", bg = "#0d0d0d" },
 
-            -- Override a color entirely
-            colors = {
-              -- For a list of colors see `lua/cyberdream/colours.lua`
-              -- Example:
-              bg = "#000000",
-              green = "#00ff00",
-              magenta = "#ff00ff",
-            },
+            -- More examples can be found in `lua/cyberdream/extensions/*.lua`
+          },
+
+          -- Override a highlight group entirely using the built-in colour palette
+          -- overrides = function(colors) -- NOTE: This function nullifies the `highlights` option
+          --   -- Example:
+          --   return {
+          --     Comment = { fg = colors.green, bg = "NONE", italic = true },
+          --     ["@property"] = { fg = colors.magenta, bold = true },
+          --   }
+          -- end,
+
+          -- Override a color entirely
+          ---@diagnostic disable-next-line: missing-fields
+          colors = {
+            -- For a list of colors see `lua/cyberdream/colours.lua`
+            -- Example:
+            bg = "#000000",
+            green = "#00ff00",
+            magenta = "#ff00ff",
+          },
+
+          -- Disable or enable colorscheme extensions
+          extensions = {
+            telescope = false,
+            snacks = true,
+            notify = true,
+            mini = true,
           },
         })
       end,
@@ -133,7 +155,6 @@ lspconfig.emmet_language_server.setup({
     "css",
     "eruby",
     "html",
-    "javascript",
     "javascriptreact",
     "less",
     "sass",
@@ -191,34 +212,17 @@ lspconfig.tailwindcss.setup({
 
 lspconfig.ts_ls.setup({
   capabilities = capabilities,
-  settings = {
+  init_options = {
     preferences = {
       includeInlayParameterNameHints = "all",
+      includeCompletionsWithInsertText = true,
+      includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+      includeInlayVariableTypeHintsWhenTypeMatchesName = false,
+      includeInlayFunctionParameterTypeHints = true,
+      includeInlayVariableTypeHints = true,
+      includeInlayPropertyDeclarationTypeHints = true,
+      includeInlayFunctionLikeReturnTypeHints = true,
+      includeInlayEnumMemberValueHints = true,
     },
-  },
-})
-
-require("which-key").register({
-  C = {
-    name = "ChatGPT",
-    c = { "<cmd>ChatGPT<CR>", "ChatGPT" },
-    e = { "<cmd>ChatGPTEditWithInstruction<CR>", "Edit with instruction", mode = { "n", "v" } },
-    g = { "<cmd>ChatGPTRun grammar_correction<CR>", "Grammar Correction", mode = { "n", "v" } },
-    t = { "<cmd>ChatGPTRun translate<CR>", "Translate", mode = { "n", "v" } },
-    k = { "<cmd>ChatGPTRun keywords<CR>", "Keywords", mode = { "n", "v" } },
-    d = { "<cmd>ChatGPTRun docstring<CR>", "Docstring", mode = { "n", "v" } },
-    a = { "<cmd>ChatGPTRun add_tests<CR>", "Add Tests", mode = { "n", "v" } },
-    o = { "<cmd>ChatGPTRun optimize_code<CR>", "Optimize Code", mode = { "n", "v" } },
-    s = { "<cmd>ChatGPTRun summarize<CR>", "Summarize", mode = { "n", "v" } },
-    f = { "<cmd>ChatGPTRun fix_bugs<CR>", "Fix Bugs", mode = { "n", "v" } },
-    x = { "<cmd>ChatGPTRun explain_code<CR>", "Explain Code", mode = { "n", "v" } },
-    r = { "<cmd>ChatGPTRun roxygen_edit<CR>", "Roxygen Edit", mode = { "n", "v" } },
-    l = { "<cmd>ChatGPTRun code_readability_analysis<CR>", "Code Readability Analysis", mode = { "n", "v" } },
-  },
-}, { prefix = "<leader>" })
-
-require("nvim-tree").setup({
-  update_focused_file = {
-    enable = true,
   },
 })

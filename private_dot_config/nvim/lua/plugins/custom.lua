@@ -1,23 +1,22 @@
 return {
   { "ellisonleao/gruvbox.nvim" },
 
-  -- {
-  --   "vim-airline/vim-airline",
-  --   dependencies = {
-  --     "vim-airline/vim-airline-themes",
-  --   },
-  --   init = function ()
-  --     vim.cmd([[
-  --       let g:airline_theme='google_dark'
-  --       let g:airline_left_sep=''
-  --     ]])
-  --   end
-  -- },
-
   {
     "nvim-lualine/lualine.nvim",
     lazy = false,
     enabled = true,
+    opts = function()
+      local prose = require("nvim-prose")
+
+      return {
+        sections = {
+          lualine_z = {
+            { prose.word_count, cond = prose.is_available },
+            { prose.reading_time, cond = prose.is_available },
+          },
+        },
+      }
+    end,
   },
 
   {
@@ -39,7 +38,7 @@ return {
     ---@field enabled? boolean
     opts = {
       gitbrowse = {
-        enabled = true
+        enabled = true,
       },
       indent = {
         indent = {
@@ -53,21 +52,64 @@ return {
           enabled = true,
           underline = true,
           char = "▏",
-        }
-      }
+        },
+      },
+    },
+  },
+
+  -- {
+  --   "ray-x/lsp_signature.nvim",
+  --   event = "VeryLazy",
+  --   opts = {},
+  --   config = function(_, opts) require'lsp_signature'.setup(opts) end
+  -- },
+
+  {
+    "hrsh7th/nvim-cmp",
+    opts = {
+      auto_brackets = { "javascript", "typescript", "python", "elixir", "rust", "go" },
+    },
+  },
+
+  {
+    "Saghen/blink.cmp",
+    enabled = false,
+    version = "*",
+    event = "InsertEnter",
+    ---@module 'blink.cmp'
+    ---@type blink.cmp.Config
+    opts = {
+      keymap = {
+        preset = "enter",
+        cmdline = {},
+      },
+    },
+  },
+
+  {
+    "skwee357/nvim-prose",
+    opts = {
+      wpm = 150,
+      filetypes = { "markdown", "asciidoc", "text" },
+      placeholders = {
+        words = "words",
+        minutes = "min",
+      },
+    },
+  },
+
+  {
+    "altermo/ultimate-autopair.nvim",
+    event = { "InsertEnter" },
+    branch = "v0.6", --recommended as each new version will have breaking changes
+    opts = {
+      --Config goes here
     },
   },
 
   {
     "echasnovski/mini.pairs",
-    event = "VeryLazy",
-    opts = {
-      mappings = {
-        [' '] = { action = 'open', pair = '  ', neigh_pattern = '[%(%[{][%)%]}]' },
-        ['<'] = { action = 'open', pair = '<>' },
-        ['>'] = { action = 'close', pair = '<>' },
-      },
-    }
+    enabled = false,
   },
 
   {
@@ -98,66 +140,6 @@ return {
       })
     end,
   },
-
-  -- {
-  --   "mrcjkb/rustaceanvim",
-  --   version = "^5", -- Recommended
-  --   lazy = false, -- This plugin is already lazy
-  -- },
-
-  -- {
-  --   "mrcjkb/rustaceanvim",
-  --   enabled = false,
-  --   version = "^4", -- Recommended
-  --   ft = { "rust" },
-  --   opts = {
-  --     server = {
-  --       on_attach = function(_, bufnr)
-  --         vim.keymap.set(
-  --           "n",
-  --           "<M-3>",
-  --           require("config.common").workspace_diagnostics,
-  --           { noremap = true, silent = true }
-  --         )
-  --         vim.keymap.set("n", "<M-w>", require("config.common").document_diagnostics, { noremap = true, silent = true })
-  --         vim.keymap.set("n", "<M-w>", require("config.common").document_diagnostics, { noremap = true, silent = true })
-  --         vim.keymap.set("n", "<leader>cR", function()
-  --           vim.cmd.RustLsp("codeAction")
-  --         end, { desc = "Code Action", buffer = bufnr })
-  --         vim.keymap.set("n", "<leader>D", function()
-  --           vim.cmd.RustLsp("debuggables")
-  --         end, { desc = "Rust debuggables", buffer = bufnr })
-  --       end,
-  --       default_settings = {
-  --         -- rust-analyzer language server configuration
-  --         ["rust-analyzer"] = {
-  --           cargo = {
-  --             allFeatures = true,
-  --             loadOutDirsFromCheck = true,
-  --             runBuildScripts = true,
-  --           },
-  --           -- Add clippy lints for Rust.
-  --           checkOnSave = {
-  --             allFeatures = true,
-  --             command = "check",
-  --             extraArgs = { "--no-deps" },
-  --           },
-  --           procMacro = {
-  --             enable = true,
-  --             ignored = {
-  --               ["async-trait"] = { "async_trait" },
-  --               ["napi-derive"] = { "napi" },
-  --               ["async-recursion"] = { "async_recursion" },
-  --             },
-  --           },
-  --         },
-  --       },
-  --     },
-  --   },
-  --   config = function(_, opts)
-  --     vim.g.rustaceanvim = vim.tbl_deep_extend("keep", vim.g.rustaceanvim or {}, opts or {})
-  --   end,
-  -- },
 
   {
     "folke/noice.nvim",
@@ -207,51 +189,6 @@ return {
         "<leader>ghf",
         ":Gitsigns diffthis ",
         desc = "Diff from commit",
-      },
-    },
-  },
-
-  -- { "Issafalcon/lsp-overloads.nvim" },
-
-  -- { "ray-x/lsp_signature.nvim" },
-
-  -- {
-  --   "jackMort/ChatGPT.nvim",
-  --   event = "VeryLazy",
-  --   config = function()
-  --     require("chatgpt").setup({
-  --       api_key_cmd = "gpg -d " .. vim.fn.expand("$HOME") .. "/openai.secret.gpg",
-  --     })
-  --   end,
-  --   dependencies = {
-  --     "MunifTanjim/nui.nvim",
-  --     "nvim-lua/plenary.nvim",
-  --     "nvim-telescope/telescope.nvim",
-  --   },
-  -- },
-
-  {
-    "nvim-telescope/telescope.nvim",
-    keys = {
-      { "<leader>gs", false },
-      {
-        "<leader>sB",
-        function()
-          require("telescope.builtin").live_grep({
-            grep_open_files = true,
-          })
-        end,
-        desc = "Search in buffers",
-      },
-      {
-        "<leader>sS",
-        function()
-          require("telescope.builtin").lsp_workspace_symbols({
-            query = vim.fn.expand("<cword>"),
-          })
-        end,
-        mode = { "v" },
-        desc = "Search for selected Symbol (Workspace)",
       },
     },
   },
@@ -452,6 +389,7 @@ return {
                   console = "integratedTerminal",
                   skipFiles = {
                     "${workspaceFolder}/node_modules/**/*.js",
+                    "<node_internals>/**",
                     "<node_internals>/**/*.js",
                   },
                 },
@@ -466,6 +404,7 @@ return {
                   port = 9229,
                   skipFiles = {
                     "${workspaceFolder}/node_modules/**/*.js",
+                    "<node_internals>/**",
                     "<node_internals>/**/*.js",
                   },
                 },
@@ -480,7 +419,6 @@ return {
               }
               require("mason-nvim-dap").default_setup(config) -- don't forget this!
             end,
-            code,
           },
         },
       },
