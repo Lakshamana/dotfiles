@@ -2,21 +2,88 @@ return {
   { "ellisonleao/gruvbox.nvim" },
 
   {
-    "nvim-lualine/lualine.nvim",
-    lazy = false,
-    enabled = true,
-    opts = function()
-      local prose = require("nvim-prose")
-
-      return {
-        sections = {
-          lualine_z = {
-            { prose.word_count, cond = prose.is_available },
-            { prose.reading_time, cond = prose.is_available },
+    "yetone/avante.nvim",
+    event = "VeryLazy",
+    version = false, -- Never set this value to "*"! Never!
+    opts = {
+      -- add any opts here
+      -- for example
+      provider = "claude",
+      file_selector = {
+        provider = 'snacks',
+      },
+      claude = {
+        endpoint = "https://api.anthropic.com",
+        model = "claude-3-5-sonnet-20241022",
+        temperature = 0,
+        max_tokens = 4096,
+      },
+      openai = {
+        endpoint = "https://api.openai.com/v1",
+        model = "gpt-4o-mini", -- your desired model (or use gpt-4o, etc.)
+        timeout = 30000, -- Timeout in milliseconds, increase this for reasoning models
+        temperature = 0,
+        max_tokens = 8192, -- Increase this to include reasoning tokens (for reasoning models)
+        --reasoning_effort = "medium", -- low|medium|high, only used for reasoning models
+        disable_tools = true,
+      },
+    },
+    -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+    build = "make",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "stevearc/dressing.nvim",
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+      --- The below dependencies are optional,
+      "echasnovski/mini.pick", -- for file_selector provider mini.pick
+      "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
+      "ibhagwan/fzf-lua", -- for file_selector provider fzf
+      "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+      "zbirenbaum/copilot.lua", -- for providers='copilot'
+      {
+        -- support for image pasting
+        "HakonHarnes/img-clip.nvim",
+        event = "VeryLazy",
+        opts = {
+          -- recommended settings
+          default = {
+            embed_image_as_base64 = false,
+            prompt_for_file_name = false,
+            drag_and_drop = {
+              insert_mode = true,
+            },
+            -- required for Windows users
+            use_absolute_path = true,
           },
         },
-      }
-    end,
+      },
+      {
+        -- Make sure to set this up properly if you have lazy=true
+        'MeanderingProgrammer/render-markdown.nvim',
+        opts = {
+          file_types = { "markdown", "Avante" },
+        },
+        ft = { "markdown", "Avante" },
+      },
+    },
+  },
+
+  {
+    "nvim-treesitter/nvim-treesitter",
+    opts = {
+      indent = { enable = false },
+    },
+  },
+
+  {
+    "kr40/nvim-macros",
+    cmd = {"MacroSave", "MacroYank", "MacroSelect", "MacroDelete"},
+    opts = {
+      json_file_path = vim.fs.normalize(vim.fn.stdpath("config") .. "/macros.json"), -- Location where the macros will be stored
+      default_macro_register = "q", -- Use as default register for :MacroYank and :MacroSave and :MacroSelect Raw functions
+      json_formatter = "none", -- can be "none" | "jq" | "yq" used to pretty print the json file (jq or yq must be installed!)
+    }
   },
 
   {
@@ -57,6 +124,51 @@ return {
     },
   },
 
+  {
+    "stevearc/aerial.nvim",
+    enabled = true,
+    keys = {
+      {
+        "<leader>o",
+        function()
+          require("aerial").snacks_picker({})
+        end,
+      },
+    },
+  },
+
+  {
+    "zk-org/zk-nvim",
+    config = function()
+      require("zk").setup({ picker = "fzf_lua" })
+    end,
+    keys = {
+      { "<leader>zi", ":ZkIndex<CR>", desc = "ZK Index", mode = { "n" } },
+      { "<leader>zn", ":ZkNew<CR>", desc = "ZK New", mode = { "n" } },
+      { "<leader>zl", ":ZkNotes<CR>", desc = "ZK List", mode = { "n" } },
+      { "<leader>zL", ":ZkLinks<CR>", desc = "ZK Links", mode = { "n" } },
+      { "<leader>zI", ":ZkInsertLink<CR>", desc = "ZK Insert Link", mode = { "n" } },
+      { "<leader>zI", ":'<,'>ZkInsertLinkAtSelection<CR>", desc = "ZK Insert Link at selection", mode = { "v" } },
+    },
+  },
+
+  {
+    "toppair/peek.nvim",
+    event = { "VeryLazy" },
+    build = "deno task --quiet build:fast",
+    config = function()
+      require("peek").setup({
+        app = "browser",
+      })
+      vim.api.nvim_create_user_command("PeekOpen", require("peek").open, {})
+      vim.api.nvim_create_user_command("PeekClose", require("peek").close, {})
+    end,
+    keys = {
+      { "<leader>mO", ":PeekOpen<CR>", desc = "PeekOpen", mode = { "n" } },
+      { "<leader>mc", ":PeekClose<CR>", desc = "PeekClose", mode = { "n" } },
+    },
+  },
+
   -- {
   --   "ray-x/lsp_signature.nvim",
   --   event = "VeryLazy",
@@ -67,7 +179,7 @@ return {
   {
     "hrsh7th/nvim-cmp",
     opts = {
-      auto_brackets = { "javascript", "typescript", "python", "elixir", "rust", "go" },
+      auto_brackets = { "javascript", "typescript", "python", "elixir", "go" },
     },
   },
 
@@ -268,17 +380,6 @@ return {
       },
       label = {
         rainbow = { enabled = true },
-      },
-    },
-  },
-
-  {
-    "neovim/nvim-lspconfig",
-    opts = {
-      setup = {
-        rust_analyzer = function()
-          return true
-        end,
       },
     },
   },

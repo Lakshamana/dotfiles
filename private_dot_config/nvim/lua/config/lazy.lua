@@ -22,6 +22,7 @@ require("lazy").setup({
     },
     -- import any extras modules here
     { import = "lazyvim.plugins.extras.lang.elixir" },
+    { import = "lazyvim.plugins.extras.lang.kotlin" },
     { import = "lazyvim.plugins.extras.lang.go" },
     { import = "lazyvim.plugins.extras.lang.rust" },
     { import = "lazyvim.plugins.extras.lang.json" },
@@ -50,7 +51,7 @@ require("lazy").setup({
     "rafi/awesome-vim-colorschemes",
     {
       "scottmckendry/cyberdream.nvim",
-      config = function ()
+      config = function()
         require("cyberdream").setup({
           -- Set light or dark variant
           variant = "default", -- use "light" for the light variant. Also accepts "auto" to set dark or light colors based on the current value of `vim.o.background`
@@ -146,11 +147,13 @@ require("lazy").setup({
   },
 })
 
-local lspconfig = require("lspconfig")
 local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
 
-lspconfig.emmet_language_server.setup({
+vim.lsp.config('*', {
+  capabilities = capabilities
+})
+
+vim.lsp.config('emmet_language_server', {
   filetypes = {
     "css",
     "eruby",
@@ -189,29 +192,27 @@ lspconfig.emmet_language_server.setup({
   },
 })
 
-lspconfig.tailwindcss.setup({
-  capabilities = capabilities,
-  filetypes = { "html", "elixir", "eelixir", "heex" },
-  init_options = {
-    userLanguages = {
-      elixir = "html-eex",
-      eelixir = "html-eex",
-      heex = "html-eex",
-    },
-  },
-  settings = {
-    tailwindCSS = {
-      experimental = {
-        classRegex = {
-          'class[:]\\s*"([^"]*)"',
-        },
-      },
-    },
-  },
-})
+-- lspconfig.tailwindcss.setup({
+--   filetypes = { "html", "eelixir", "heex" },
+--   init_options = {
+--     userLanguages = {
+--       elixir = "html-eex",
+--       eelixir = "html-eex",
+--       heex = "html-eex",
+--     },
+--   },
+--   settings = {
+--     tailwindCSS = {
+--       experimental = {
+--         classRegex = {
+--           'class[:]\\s*"([^"]*)"',
+--         },
+--       },
+--     },
+--   },
+-- })
 
-lspconfig.ts_ls.setup({
-  capabilities = capabilities,
+vim.lsp.config('ts_ls', {
   init_options = {
     preferences = {
       includeInlayParameterNameHints = "all",
@@ -219,10 +220,35 @@ lspconfig.ts_ls.setup({
       includeInlayParameterNameHintsWhenArgumentMatchesName = false,
       includeInlayVariableTypeHintsWhenTypeMatchesName = false,
       includeInlayFunctionParameterTypeHints = true,
-      includeInlayVariableTypeHints = true,
+      includeInlayVariableTypeHints = false,
       includeInlayPropertyDeclarationTypeHints = true,
-      includeInlayFunctionLikeReturnTypeHints = true,
+      includeInlayFunctionLikeReturnTypeHints = false,
       includeInlayEnumMemberValueHints = true,
+    },
+    -- plugins = {
+    --   {
+    --     name = "@vue/typescript-plugin",
+    --     location = require("mason-registry").get_package("vue-language-server"):get_install_path()
+    --       .. "/node_modules/@vue/language-server",
+    --     languages = { "vue" },
+    --   },
+    -- },
+    filetypes = {
+      "javascript",
+      "javascriptreact",
+      "typescript",
+      "typescriptreact",
+      "vue",
     },
   },
 })
+
+vim.lsp.config('vuels', {})
+
+-- lspconfig.volar.setup({
+--   init_options = {
+--     vue = {
+--       hybridMode = false,
+--     },
+--   },
+-- })

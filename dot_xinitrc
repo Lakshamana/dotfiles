@@ -43,5 +43,6 @@ pipewire-pulse &
 wireplumber &
 
 xset -dpms
+setxkbmap -option ctrl:ralt_rctrl
 
 exec i3

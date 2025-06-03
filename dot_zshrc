@@ -1,21 +1,24 @@
 # If you come from bash you might have to change your $PATH.
-export ASDF_DIR=/opt/asdf-vm
-export PATH=$HOME/bin:/usr/local/bin:~/.scripts:$PATH:$ASDF_DIR/bin:~/.local/bin:$HOME/.asdf/installs/rust/1.72.0/bin
+export PATH=$HOME/bin:/usr/local/bin:~/.scripts:$PATH:$ASDF_DIR/bin:~/.local/bin:$HOME/.asdf/installs/rust/1.72.0/bin:$HOME/go/bin:$HOME/.cargo/bin:$HOME/.asdf/installs/deno/2.2.2/bin:/opt/asdf-vm/bin:$HOME/.asdf/installs/php/8.4.4/bin
 export SUDO_ASKPASS=/sbin/xaskpass
 export SSH_ASKPASS=/sbin/xaskpass
 
+export LABPATH=~/.lab
+export ZK_NOTEBOOK_DIR=~/notes
+
+export XDG_CURRENT_DESKTOP='GNOME'
+
 source ~/.zplug/init.zsh
-source /usr/share/nvm/init-nvm.sh
+# source /usr/share/nvm/init-nvm.sh
 
 # Path to your oh-my-zsh installation.
 export ZSH="/home/$USER/.oh-my-zsh"
 export EDITOR='nvim'
-export OPENAI_API_KEY=`cat ~/.openai_key`
+# export OPENAI_API_KEY=`cat ~/.openai_key`
 
 # export $BROWSER
-export BROWSER="/usr/bin/microsoft-edge-beta"
+export BROWSER="/usr/bin/brave"
 
-export OPENAI_API_KEY="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"
 
 export CLOUDSDK_PYTHON=python2
 
@@ -89,7 +92,6 @@ plugins=(
 	# git 
 	# aws 
 	# gcloud 
-  asdf
 )
 
 # zplug "nyquase/vi-mode"
@@ -179,7 +181,6 @@ alias f="fff"
 # append completions to fpath
 fpath=(${ASDF_DIR}/completions $fpath)
 # initialise completions with ZSH's compinit
-autoload -Uz compinit
 
 ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg[green]%}:: "
 ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
@@ -189,5 +190,21 @@ ZSH_THEME_GIT_PROMPT_CLEAN=" %{$fg[green]%}%{$reset_color%}"
 PROMPT='$THEME_PROMPT_PREFIX%f%B%F{240}%1~ %f%b$(git_prompt_info)%(?.%F{green}$THEME_VI_MODE_SYMBOL.%F{red}$THEME_VI_MODE_SYMBOL) '
 
 fpath+=~/.zfunc
+autoload -Uz compinit
 compinit
 zplug load
+source /usr/share/nvm/init-nvm.sh
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+# pnpm
+export PNPM_HOME="/home/arjuna/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+[ -f "/home/arjuna/.ghcup/env" ] && . "/home/arjuna/.ghcup/env" # ghcup-env
