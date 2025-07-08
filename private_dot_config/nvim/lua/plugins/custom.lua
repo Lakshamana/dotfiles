@@ -8,24 +8,46 @@ return {
     opts = {
       -- add any opts here
       -- for example
-      provider = "claude",
+      provider = "openai",
+      behaviour = {
+        auto_suggestions = false
+      },
+      providers = {
+        claude = {
+          endpoint = "https://api.anthropic.com",
+          model = "claude-3-5-sonnet-20241022",
+          extra_request_body = {
+            temperature = 0,
+            max_tokens = 4096,
+          }
+        },
+        ollama = {
+          endpoint = "http://127.0.0.1:11434",
+          model = "phi3:mini",
+          timeout = 30000, -- Timeout in milliseconds
+          extra_request_body = {
+            options = {
+              temperature = 0.75,
+              num_ctx = 20480,
+              keep_alive = "5m",
+            },
+          },
+        },
+        openai = {
+          endpoint = "https://api.openai.com/v1",
+          -- model = "gpt-4.1-nano", -- your desired model (or use gpt-4o, etc.)
+          model = "gpt-3.5-turbo-instruct",
+          timeout = 30000, -- Timeout in milliseconds, increase this for reasoning models
+          extra_request_body = {
+            temperature = 0,
+            max_tokens = 8192, -- Increase this to include reasoning tokens (for reasoning models)
+            --reasoning_effort = "medium", -- low|medium|high, only used for reasoning models
+            disable_tools = true,
+          }
+        },
+      },
       file_selector = {
         provider = 'snacks',
-      },
-      claude = {
-        endpoint = "https://api.anthropic.com",
-        model = "claude-3-5-sonnet-20241022",
-        temperature = 0,
-        max_tokens = 4096,
-      },
-      openai = {
-        endpoint = "https://api.openai.com/v1",
-        model = "gpt-4o-mini", -- your desired model (or use gpt-4o, etc.)
-        timeout = 30000, -- Timeout in milliseconds, increase this for reasoning models
-        temperature = 0,
-        max_tokens = 8192, -- Increase this to include reasoning tokens (for reasoning models)
-        --reasoning_effort = "medium", -- low|medium|high, only used for reasoning models
-        disable_tools = true,
       },
     },
     -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`

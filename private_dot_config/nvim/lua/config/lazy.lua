@@ -149,11 +149,11 @@ require("lazy").setup({
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 
-vim.lsp.config('*', {
-  capabilities = capabilities
+vim.lsp.config("*", {
+  capabilities = capabilities,
 })
 
-vim.lsp.config('emmet_language_server', {
+vim.lsp.config("emmet_language_server", {
   filetypes = {
     "css",
     "eruby",
@@ -212,7 +212,7 @@ vim.lsp.config('emmet_language_server', {
 --   },
 -- })
 
-vim.lsp.config('ts_ls', {
+vim.lsp.config("ts_ls", {
   init_options = {
     preferences = {
       includeInlayParameterNameHints = "all",
@@ -243,7 +243,36 @@ vim.lsp.config('ts_ls', {
   },
 })
 
-vim.lsp.config('vuels', {})
+vim.lsp.config("vuels", {})
+
+vim.lsp.config("kotlin_language_server", {
+  cmd = { "kotlin-language-server" },
+  root_dir = require("lspconfig.util").root_pattern(
+    "settings.gradle",
+    "settings.gradle.kts",
+    "build.gradle",
+    "build.gradle.kts",
+    ".git"
+  ),
+  settings = {
+    kotlin = {
+      inlayHints = {
+        typeHints = true,
+        parameterHints = true,
+        chainedHints = true
+      },
+      externalSources = {
+        useKlsScheme = true,
+      },
+      indexing = {
+        enabled = true,
+      },
+    },
+  },
+  init_options = {
+    gradleProjectPath = vim.fn.getcwd() .. "/build.gradle.kts", -- or .gradle
+  },
+})
 
 -- lspconfig.volar.setup({
 --   init_options = {
