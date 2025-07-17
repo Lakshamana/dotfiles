@@ -2,67 +2,75 @@ return {
   { "ellisonleao/gruvbox.nvim" },
 
   {
-    "yetone/avante.nvim",
-    event = "VeryLazy",
-    version = false, -- Never set this value to "*"! Never!
-    opts = {
-      -- add any opts here
-      -- for example
-      provider = "openai",
-      behaviour = {
-        auto_suggestions = false
-      },
-      providers = {
-        claude = {
-          endpoint = "https://api.anthropic.com",
-          model = "claude-3-5-sonnet-20241022",
-          extra_request_body = {
-            temperature = 0,
-            max_tokens = 4096,
-          }
-        },
-        ollama = {
-          endpoint = "http://127.0.0.1:11434",
-          model = "phi3:mini",
-          timeout = 30000, -- Timeout in milliseconds
-          extra_request_body = {
-            options = {
-              temperature = 0.75,
-              num_ctx = 20480,
-              keep_alive = "5m",
-            },
+    "norcalli/nvim-colorizer.lua",
+    config = function ()
+      require("colorizer").setup()
+    end
+  },
+
+  {
+    "olimorris/codecompanion.nvim",
+    config = function ()
+      local spinner = require("plugins.codecompanion.spinner")
+      spinner:init()
+
+      local adapter = require("plugins.codecompanion.adapters")
+      require("codecompanion").setup({
+        strategies = {
+          chat = {
+            slash_commands = adapter.get_slash_commands(),
+            adapter = "openai",
+            model = "gpt-4.1"
           },
-        },
-        openai = {
-          endpoint = "https://api.openai.com/v1",
-          -- model = "gpt-4.1-nano", -- your desired model (or use gpt-4o, etc.)
-          model = "gpt-3.5-turbo-instruct",
-          timeout = 30000, -- Timeout in milliseconds, increase this for reasoning models
-          extra_request_body = {
-            temperature = 0,
-            max_tokens = 8192, -- Increase this to include reasoning tokens (for reasoning models)
-            --reasoning_effort = "medium", -- low|medium|high, only used for reasoning models
-            disable_tools = true,
+          inline = {
+            adapter = "openai",
+            model = "gpt-4.1-nano"
           }
         },
+        adapters = {
+          openai = adapter.get_adapter(),
+        }
+      })
+    end,
+    keys = {
+      {
+        "<Leader>i",
+        function()
+          local adapter = require("plugins.codecompanion.adapters")
+          local codecompanion = require("codecompanion")
+          local chat = codecompanion:last_chat()
+          if not chat then
+            vim.notify("Chat not exist")
+          end
+          adapter.slash_paste_image(chat)
+        end,
+        desc = "Paste Image",
+        mode = { "n" },
       },
-      file_selector = {
-        provider = 'snacks',
+      {
+        "<C-a>",
+        "<cmd>CodeCompanionActions<CR>",
+        desc = "Open the action palette",
+        mode = { "n", "v" },
+      },
+      {
+        "<Leader>a",
+        "<cmd>CodeCompanionChat Toggle<CR>",
+        desc = "Toggle a chat buffer",
+        mode = { "n", "v" },
+      },
+      {
+        "<LocalLeader>a",
+        "<cmd>CodeCompanionChat Add<CR>",
+        desc = "Add code to a chat buffer",
+        mode = { "v" },
       },
     },
-    -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
-    build = "make",
     dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-      "stevearc/dressing.nvim",
       "nvim-lua/plenary.nvim",
-      "MunifTanjim/nui.nvim",
-      --- The below dependencies are optional,
-      "echasnovski/mini.pick", -- for file_selector provider mini.pick
-      "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
-      "ibhagwan/fzf-lua", -- for file_selector provider fzf
-      "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
-      "zbirenbaum/copilot.lua", -- for providers='copilot'
+      "nvim-treesitter/nvim-treesitter",
+      "Davidyz/VectorCode",
+      "j-hui/fidget.nvim",
       {
         -- support for image pasting
         "HakonHarnes/img-clip.nvim",
@@ -79,17 +87,127 @@ return {
             use_absolute_path = true,
           },
         },
+        keys = {
+          { "<leader>p", ":PasteImage<CR>", desc = "Paste Image" }
+        }
       },
       {
         -- Make sure to set this up properly if you have lazy=true
         'MeanderingProgrammer/render-markdown.nvim',
         opts = {
-          file_types = { "markdown", "Avante" },
+          file_types = { "markdown", "Avante", "codecompanion" },
         },
-        ft = { "markdown", "Avante" },
+        ft = { "markdown", "Avante", "codecompanion" },
+      },
+      {
+        "echasnovski/mini.diff",
+        config = function()
+          local diff = require("mini.diff")
+          diff.setup({
+            -- Disabled by default
+            source = diff.gen_source.none(),
+          })
+        end,
       },
     },
   },
+
+  -- {
+  --   "yetone/avante.nvim",
+  --   event = "VeryLazy",
+  --   version = false, -- Never set this value to "*"! Never!
+  --   opts = {
+  --     -- add any opts here
+  --     -- for example
+  --     provider = "openai",
+  --     behaviour = {
+  --       auto_suggestions = false,
+  --       support_paste_from_clipboard = true,
+  --       enable_token_counting = false,
+  --     },
+  --     providers = {
+  --       claude = {
+  --         endpoint = "https://api.anthropic.com",
+  --         model = "claude-3-5-sonnet-20241022",
+  --         extra_request_body = {
+  --           temperature = 0,
+  --           max_tokens = 4096,
+  --         }
+  --       },
+  --       ollama = {
+  --         endpoint = "http://127.0.0.1:11434",
+  --         model = "phi3:mini",
+  --         timeout = 30000, -- Timeout in milliseconds
+  --         extra_request_body = {
+  --           options = {
+  --             temperature = 0.75,
+  --             num_ctx = 20480,
+  --             keep_alive = "5m",
+  --           },
+  --         },
+  --       },
+  --       openai = {
+  --         endpoint = "https://api.openai.com/v1",
+  --         model = "gpt-4.1", -- your desired model (or use gpt-4o, etc.)
+  --         timeout = 30000, -- Timeout in milliseconds, increase this for reasoning models
+  --         extra_request_body = {
+  --           temperature = 0,
+  --           -- max_tokens = 4096, -- Increase this to include reasoning tokens (for reasoning models)
+  --           -- max_completion_tokens = 4096,
+  --           -- reasoning_effort = "medium", -- low|medium|high, only used for reasoning models
+  --         },
+  --         thinking = {
+  --           type = "disabled",
+  --         },
+  --         disable_tools = true,
+  --       },
+  --     },
+  --     selector = {
+  --       provider = 'fzf_lua',
+  --     },
+  --   },
+  --   -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+  --   build = "make",
+  --   dependencies = {
+  --     "nvim-treesitter/nvim-treesitter",
+  --     "stevearc/dressing.nvim",
+  --     "nvim-lua/plenary.nvim",
+  --     "MunifTanjim/nui.nvim",
+  --     --- The below dependencies are optional,
+  --     "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
+  --     "ibhagwan/fzf-lua", -- for file_selector provider fzf
+  --     "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+  --     "zbirenbaum/copilot.lua", -- for providers='copilot'
+  --     {
+  --       -- support for image pasting
+  --       "HakonHarnes/img-clip.nvim",
+  --       event = "VeryLazy",
+  --       opts = {
+  --         -- recommended settings
+  --         default = {
+  --           embed_image_as_base64 = false,
+  --           prompt_for_file_name = false,
+  --           drag_and_drop = {
+  --             insert_mode = true,
+  --           },
+  --           -- required for Windows users
+  --           use_absolute_path = true,
+  --         },
+  --       },
+  --       keys = {
+  --         { "<leader>p", ":PasteImage<CR>", desc = "Paste Image" }
+  --       }
+  --     },
+  --     {
+  --       -- Make sure to set this up properly if you have lazy=true
+  --       'MeanderingProgrammer/render-markdown.nvim',
+  --       opts = {
+  --         file_types = { "markdown", "Avante" },
+  --       },
+  --       ft = { "markdown", "Avante" },
+  --     },
+  --   },
+  -- },
 
   {
     "nvim-treesitter/nvim-treesitter",
@@ -353,7 +471,9 @@ return {
     keys = {
       {
         "<Leader>e",
-        ":NvimTreeFindFileToggle<CR>",
+        function ()
+          require("nvim-tree.api").tree.toggle({ find_file = true })
+        end,
         mode = { "n" },
         desc = "Open Nvim Tree",
       },
@@ -447,6 +567,21 @@ return {
           -- require("dap.ext.vscode").load_launchjs()
 
           local dap = require("dap")
+          dap.configurations.lua = {
+            {
+              name = 'Current file (local-lua-dbg, nlua)',
+              type = 'local-lua',
+              request = 'launch',
+              cwd = '${workspaceFolder}',
+              program = {
+                lua = 'nlua.lua',
+                file = '${file}',
+              },
+              verbose = true,
+              args = {},
+            },
+          }
+
           dap.configurations.elixir = {
             {
               type = "mix_task",
@@ -467,10 +602,34 @@ return {
             },
           }
 
+          dap.configurations.javascript = {
+            {
+              name = "Run Extension",
+              type = "extensionHost",
+              request = "launch",
+              program = "${workspaceFolder}/out/extension.js",
+              cwd = "${workspaceFolder}",
+              args = {
+                "--extensionDevelopmentPath=${workspaceFolder}"
+              },
+              outFiles = {
+                "${workspaceFolder}/out/**/*.js"
+              },
+              preLaunchTask = "npm: watch"
+            }
+
+          }
+
           dap.adapters.mix_task = {
             type = "executable",
             command = "elixir-ls-debugger",
             args = {},
+          }
+
+          dap.adapters.extensionHost = {
+            type = "executable",
+            command = "js-debug-adapter",
+            args = {}
           }
 
           require("dapui").setup(opts)
