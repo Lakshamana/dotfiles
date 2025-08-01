@@ -3,14 +3,19 @@ return {
 
   {
     "norcalli/nvim-colorizer.lua",
-    config = function ()
+    config = function()
       require("colorizer").setup()
-    end
+    end,
+  },
+
+  {
+    "augmentcode/augment.vim",
+    lazy = false,
   },
 
   {
     "olimorris/codecompanion.nvim",
-    config = function ()
+    config = function()
       local spinner = require("plugins.codecompanion.spinner")
       spinner:init()
 
@@ -19,17 +24,18 @@ return {
         strategies = {
           chat = {
             slash_commands = adapter.get_slash_commands(),
-            adapter = "openai",
-            model = "gpt-4.1"
+            adapter = "anthropic",
+            model = "claude-sonnet-4-20250514",
           },
           inline = {
             adapter = "openai",
-            model = "gpt-4.1-nano"
-          }
+            model = "gpt-4.1-nano",
+          },
         },
         adapters = {
-          openai = adapter.get_adapter(),
-        }
+          openai = adapter.get_openai_adapter(),
+          anthropic = adapter.get_anthropic_adapter(),
+        },
       })
     end,
     keys = {
@@ -88,12 +94,12 @@ return {
           },
         },
         keys = {
-          { "<leader>p", ":PasteImage<CR>", desc = "Paste Image" }
-        }
+          { "<leader>p", ":PasteImage<CR>", desc = "Paste Image" },
+        },
       },
       {
         -- Make sure to set this up properly if you have lazy=true
-        'MeanderingProgrammer/render-markdown.nvim',
+        "MeanderingProgrammer/render-markdown.nvim",
         opts = {
           file_types = { "markdown", "Avante", "codecompanion" },
         },
@@ -218,12 +224,12 @@ return {
 
   {
     "kr40/nvim-macros",
-    cmd = {"MacroSave", "MacroYank", "MacroSelect", "MacroDelete"},
+    cmd = { "MacroSave", "MacroYank", "MacroSelect", "MacroDelete" },
     opts = {
       json_file_path = vim.fs.normalize(vim.fn.stdpath("config") .. "/macros.json"), -- Location where the macros will be stored
       default_macro_register = "q", -- Use as default register for :MacroYank and :MacroSave and :MacroSelect Raw functions
       json_formatter = "none", -- can be "none" | "jq" | "yq" used to pretty print the json file (jq or yq must be installed!)
-    }
+    },
   },
 
   {
@@ -334,6 +340,9 @@ return {
       keymap = {
         preset = "enter",
         cmdline = {},
+        ["<C-y>"] = { "select_and_accept" },
+        ["<C-p>"] = { "select_prev", "fallback" },
+        ["<C-n>"] = { "select_next", "fallback" },
       },
     },
   },
@@ -426,10 +435,6 @@ return {
         " supported backends and further explanation is provided in the documentation,
         " see ":help vimtex-compiler".
         let g:vimtex_compiler_method = 'tectonic'
-
-        " Most VimTeX mappings rely on localleader and this can be changed with the
-        " following line. The default is usually fine and is the symbol "\".
-        let maplocalleader = ","
         ]])
     end,
   },
@@ -471,7 +476,7 @@ return {
     keys = {
       {
         "<Leader>e",
-        function ()
+        function()
           require("nvim-tree.api").tree.toggle({ find_file = true })
         end,
         mode = { "n" },
@@ -569,13 +574,13 @@ return {
           local dap = require("dap")
           dap.configurations.lua = {
             {
-              name = 'Current file (local-lua-dbg, nlua)',
-              type = 'local-lua',
-              request = 'launch',
-              cwd = '${workspaceFolder}',
+              name = "Current file (local-lua-dbg, nlua)",
+              type = "local-lua",
+              request = "launch",
+              cwd = "${workspaceFolder}",
               program = {
-                lua = 'nlua.lua',
-                file = '${file}',
+                lua = "nlua.lua",
+                file = "${file}",
               },
               verbose = true,
               args = {},
@@ -610,14 +615,13 @@ return {
               program = "${workspaceFolder}/out/extension.js",
               cwd = "${workspaceFolder}",
               args = {
-                "--extensionDevelopmentPath=${workspaceFolder}"
+                "--extensionDevelopmentPath=${workspaceFolder}",
               },
               outFiles = {
-                "${workspaceFolder}/out/**/*.js"
+                "${workspaceFolder}/out/**/*.js",
               },
-              preLaunchTask = "npm: watch"
-            }
-
+              preLaunchTask = "npm: watch",
+            },
           }
 
           dap.adapters.mix_task = {
@@ -629,7 +633,7 @@ return {
           dap.adapters.extensionHost = {
             type = "executable",
             command = "js-debug-adapter",
-            args = {}
+            args = {},
           }
 
           require("dapui").setup(opts)

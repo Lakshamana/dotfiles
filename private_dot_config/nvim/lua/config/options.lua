@@ -2,4 +2,5 @@
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
 -- Add any additional options hereby
 
-vim.g.fugitive_conflict_x = 1
+vim.g.maplocalleader = ","
+-- vim.g.augment_disable_tab_mapping = true
