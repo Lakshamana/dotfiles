@@ -314,10 +314,10 @@ exec --no-startup-id "~/git/general-configs/i3wm/.scripts/lightsOn.sh 540 &"
 exec_always --no-startup-id ff-theme-util
 exec_always --no-startup-id fix_xcursor
 
-exec --no-startup-id clipcatd                # start clipcatd at startup
+exec --no-startup-id "~/.cargo/bin/clipcatd"                # start clipcatd at startup
 
-bindsym $mod+i exec "clipcat-menu insert"
-bindsym $mod+o exec "clipcat-menu remove"
+bindsym $mod+i exec "~/.cargo/bin/clipcat-menu insert"
+bindsym $mod+o exec "~/.cargo/bin/clipcat-menu remove"
 
 # Color palette used for the terminal ( ~/.Xresources file )
 # Colors are gathered based on the documentation:

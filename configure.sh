@@ -73,19 +73,30 @@ prompt_user() {
 # install iosevka font
 install_font() {
       log 'cloning iosevka font repository...'
-      git clone --depth=1 -b feat/iosevka-custom https://github.com/Lakshamana/iosevka-docker.git ~/.iosevka-custom
+      git clone --depth 1 https://github.com/be5invis/Iosevka.git ~/.iosevka-custom
       cd ~/.iosevka-custom
 
-      log 'building container...'
+      log 'building...'
       # build iosevka docker image and run, extract iosevka-custom ttf files
-      docker build -t iosevka_build . -f Dockerfile
-      docker run -e -it -v $(pwd):/build iosevka_build ttf::iosevka-custom
+      npm i
+      npm run build -- ttf::IosevkaCustom
 
-      log 'copying font files to fonts folder...'
-      # copy files to fonts folder
+      log 'copying font files to fonts directory...'
       sudo cp -r dist/* /usr/share/fonts/
       fc-cache
       cd $HOME
+}
+
+# install clipcat
+install_clipcat() {
+  log 'building clipcat and installing from source code...'
+
+  mkdir -p ~/git/clipcat/
+  git clone --branch=main https://github.com/Icelk/clipcat.git ~/git/clipcat/
+  cd ~/git/clipcat
+
+  cargo install --path . -F all-bins
+  cd $HOME
 }
 
 # Main installation starts here...
@@ -163,7 +174,9 @@ sudo pacman -Sy \
       fzf \
       nvm \
       lazygit \
-      zk
+      zk \
+      protobuf \
+      feh
 
 log 'configuring NetworkManager...'
 sudo rc-update add NetworkManager default
@@ -204,7 +217,6 @@ cd $HOME # go back to previous dir
 log 'downloading aur packages...'
 yay -Sy \
       xaskpass \
-      clipcatd \
       pa-applet \
       nerd-fonts-dejavu-complete \
       ttf-nerd-fonts-symbols-2048-em \
@@ -217,6 +229,9 @@ yay -Sy \
 # reload pipewire
 log 'reloading pipewire...'
 sudo rc-service pipewire restart
+
+log 'installing clipcat...'
+install_clipcat
 
 log 'install neovim python support...'
 pip install neovim
@@ -249,3 +264,6 @@ fi
 # should I install iosevka-custom font?
 prompt_result=`prompt_user "Install iosevka-custom font?" 'y'`
 if [[ $prompt_result == 'y' ]]; then install_font; fi
+
+prompt_reboot=`prompt_user "Reboot machine?" 'y'`
+if [[ $prompt_reboot == 'y' ]]; then loginctl reboot; fi
