@@ -164,7 +164,8 @@ sudo pacman -Sy \
       fuse \
       fzf \
       nvm \
-      lazygit
+      lazygit \
+      zk
 
 log 'configuring NetworkManager...'
 sudo rc-update add NetworkManager default
