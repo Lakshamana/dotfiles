@@ -187,5 +187,3 @@ autoload -Uz compinit
 compinit
 zplug load
 source /usr/share/nvm/init-nvm.sh
-
-[ -f "/home/arjuna/.ghcup/env" ] && . "/home/arjuna/.ghcup/env" # ghcup-env

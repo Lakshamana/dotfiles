@@ -176,7 +176,10 @@ sudo pacman -Sy \
       lazygit \
       zk \
       protobuf \
-      feh
+      feh \
+      python-neovim \
+      python-i3ipc \
+      ttfautohint
 
 log 'configuring NetworkManager...'
 sudo rc-update add NetworkManager default
@@ -224,7 +227,8 @@ yay -Sy \
       powerline-console-fonts \
       ttf-fira-code \
       picom-git \
-      noise-suppression-for-voice
+      noise-suppression-for-voice \
+      ttf-joypixels
 
 # reload pipewire
 log 'reloading pipewire...'
@@ -232,9 +236,6 @@ sudo rc-service pipewire restart
 
 log 'installing clipcat...'
 install_clipcat
-
-log 'install neovim python support...'
-pip install neovim
 
 # check npm
 nvm -v
@@ -253,9 +254,6 @@ sudo pacman -Sy \
     i3status
 
 yay -Sy i3exit
-
-log 'install i3ipc module...'
-pip install i3ipc
 
 log 'install brave browser...'
 prompt_result=`prompt_user "Install brave browser?" 'y'`
