@@ -6,6 +6,8 @@
 # set variables
 GITHUB_USERNAME='Lakshamana'
 
+LOCALUSER='arjuna'
+
 # util functions
 show_usage() {
       echo 'Installs minimal setup needed packages and configs'
@@ -96,6 +98,7 @@ log 'installing chezmoi dotfile manager...'
 sudo sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/bin
 
 log 'setup dotfiles with chezmoi...'
+chezmoi init github.com/$GITHUB_USERNAME
 chezmoi update -v
 
 log 'installing both artix and arch mirrors...'
@@ -128,10 +131,6 @@ sudo pacman -Sy \
       zathura \
       zathura-pdf-mupdf \
       neovim \
-      i3-gaps \
-      i3blocks \
-      i3lock \
-      i3status \
       pavucontrol \
       docker \
       docker-compose \
@@ -162,7 +161,10 @@ sudo pacman -Sy \
       ntp-openrc \
       accountsservice \
       rclone \
-      fuse
+      fuse \
+      fzf \
+      nvm \
+      lazygit
 
 log 'configuring NetworkManager...'
 sudo rc-update add NetworkManager default
@@ -186,18 +188,19 @@ sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.
 curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
 log 'updated zsh conf. Will restart at the end...'
 
+# keep .zshrc as is
+cat ~/.zshrc.pre-oh-my-zsh > ~/.zshrc
+
 log 'downloading and installing yay...'
-# install yay
 if test -d /opt; then cd /opt; else sudo mkdir /opt && cd /opt; fi
 sudo git clone https://aur.archlinux.org/yay.git
 cd yay
-sudo chown -R arjuna:arjuna .
+sudo chown -R $LOCALUSER:$LOCALUSER .
 makepkg -si
 cd $HOME # go back to previous dir
 
 log 'downloading aur packages...'
 yay -Sy \
-      asdf-vm \
       xaskpass \
       clipcatd \
       pa-applet \
@@ -205,6 +208,7 @@ yay -Sy \
       ttf-nerd-fonts-symbols-2048-em \
       ttf-nerd-fonts-symbols-common \
       powerline-console-fonts \
+      ttf-fira-code \
       picom-git \
       noise-suppression-for-voice
 
@@ -212,31 +216,33 @@ yay -Sy \
 log 'reloading pipewire...'
 sudo rc-service pipewire restart
 
-log 'adding temporarily asdf to $PATH'
-export PATH=$PATH:/opt/asdf-vm/bin
-
-# setup asdf
-asdf plugin-add nodejs
-
-# install nodejs
-log 'setup nodejs asdf env...'
-asdf install nodejs lts
-asdf global nodejs lts
-asdf reshim nodejs
-
 log 'install neovim python support...'
 pip install neovim
+
+# check npm
+nvm -v
+if [ $? -eq 0 ]; then
+  nvm install node
+  nvm use node
+fi
+
+zplug install
+
+log 'install i3 related packages...'
+sudo pacman -Sy \
+    i3-gaps \
+    i3blocks \
+    i3lock \
+    i3status
 
 log 'install i3ipc module...'
 pip install i3ipc
 
-# check npm
-npm -v
-if [ $? -eq 0 ]; then
-      sudo npm i -g pnpm
+log 'install brave browser...'
+prompt_result=`prompt_user "Install brave browser?" 'y'`
+if [[ $prompt_result == 'y' ]] then
+  curl -fsS https://dl.brave.com/install.sh | sh
 fi
-
-zplug install
 
 # should I install iosevka-custom font?
 prompt_result=`prompt_user "Install iosevka-custom font?" 'y'`
