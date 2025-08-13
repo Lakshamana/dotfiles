@@ -252,6 +252,8 @@ sudo pacman -Sy \
     i3lock \
     i3status
 
+yay -Sy i3exit
+
 log 'install i3ipc module...'
 pip install i3ipc
 
