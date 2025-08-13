@@ -195,7 +195,7 @@ log 'downloading and installing yay...'
 if test -d /opt; then cd /opt; else sudo mkdir /opt && cd /opt; fi
 sudo git clone https://aur.archlinux.org/yay.git
 cd yay
-sudo chown -R $LOCALUSER:$LOCALUSER .
+sudo chown -R $LOCALUSER .
 makepkg -si
 cd $HOME # go back to previous dir
 
