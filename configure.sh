@@ -6,8 +6,6 @@
 # set variables
 GITHUB_USERNAME='Lakshamana'
 
-LOCALUSER='arjuna'
-
 # util functions
 show_usage() {
       echo 'Installs minimal setup needed packages and configs'
@@ -178,6 +176,9 @@ sudo rc-service ntpd start
 log 'configuring docker for non root users...'
 sudo rc-update add docker default
 sudo rc-service docker start
+sudo groupadd docker
+sudo usermod -aG docker $USER
+newgrp docker
 
 log 'enable bluetooth service by default...'
 sudo rc-update add bluetoothd default
@@ -196,7 +197,7 @@ log 'downloading and installing yay...'
 if test -d /opt; then cd /opt; else sudo mkdir /opt && cd /opt; fi
 sudo git clone https://aur.archlinux.org/yay.git
 cd yay
-sudo chown -R $LOCALUSER .
+sudo chown -R $USER .
 makepkg -si
 cd $HOME # go back to previous dir
 
