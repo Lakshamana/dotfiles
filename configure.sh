@@ -179,7 +179,9 @@ sudo pacman -Sy \
       feh \
       python-neovim \
       python-i3ipc \
-      ttfautohint
+      ttfautohint \
+      zip \
+      unzip
 
 log 'configuring NetworkManager...'
 sudo rc-update add NetworkManager default
