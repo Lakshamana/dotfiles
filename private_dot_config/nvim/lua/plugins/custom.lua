@@ -2,6 +2,24 @@ return {
   { "ellisonleao/gruvbox.nvim" },
 
   {
+    "neovim/nvim-lspconfig",
+    opts = function(_, opts)
+      -- Extend the existing gopls config
+      opts.servers = opts.servers or {}
+      opts.servers.gopls = vim.tbl_deep_extend("force", opts.servers.gopls or {}, {
+        settings = {
+          gopls = {
+            usePlaceholders = false, -- This is the key setting
+            completeUnimported = true,
+            staticcheck = true,
+            gofumpt = true,
+          },
+        },
+      })
+    end,
+  },
+
+  {
     "norcalli/nvim-colorizer.lua",
     config = function()
       require("colorizer").setup()

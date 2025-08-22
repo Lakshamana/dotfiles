@@ -259,7 +259,7 @@ vim.lsp.config("kotlin_language_server", {
       inlayHints = {
         typeHints = true,
         parameterHints = true,
-        chainedHints = true
+        chainedHints = true,
       },
       externalSources = {
         useKlsScheme = true,
@@ -271,6 +271,31 @@ vim.lsp.config("kotlin_language_server", {
   },
   init_options = {
     gradleProjectPath = vim.fn.getcwd() .. "/build.gradle.kts", -- or .gradle
+  },
+})
+
+vim.lsp.config("vtsls", {
+  settings = {
+    typescript = {
+      suggest = {
+        completeFunctionCalls = false,
+      },
+      preferences = {
+        includeCompletionsForImportModuleSpecifier = "minimal",
+        includeCompletionsWithSnippetText = false, -- Disable snippets
+        includeCompletionsWithInsertText = false,
+      },
+    },
+    javascript = {
+      suggest = {
+        completeFunctionCalls = false,
+      },
+      preferences = {
+        includeCompletionsForImportModuleSpecifier = "minimal",
+        includeCompletionsWithSnippetText = false, -- Disable snippets
+        includeCompletionsWithInsertText = false,
+      },
+    },
   },
 })
 

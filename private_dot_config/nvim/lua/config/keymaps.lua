@@ -9,3 +9,5 @@ vim.api.nvim_set_keymap("t", "<c-q>", "<c-\\><c-n>", { noremap = true, silent = 
 vim.api.nvim_set_keymap("t", "<c-l>", "\rclear<CR>", { noremap = true })
 
 vim.api.nvim_set_keymap("i", "<c-c>", "<esc>", { noremap = true })
+
+vim.api.nvim_set_keymap("i", "<C-z>", "<cmd>call augment#Accept()<CR>", { noremap = true })

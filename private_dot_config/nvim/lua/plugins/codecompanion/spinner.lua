@@ -7,7 +7,7 @@ function M:init()
     pattern = "CodeCompanion*",
     group = group,
     callback = function(request)
-      if request.match == "CodeCompanionChatSubmitted" then
+      if request.match == "CodeCompanionChatSubmitted" or request.match == "CodeCompanionContextChanged" then
         return
       end
 
