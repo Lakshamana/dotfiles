@@ -3,4 +3,4 @@
 -- Add any additional options hereby
 
 vim.g.maplocalleader = ","
--- vim.g.augment_disable_tab_mapping = true
+vim.g.augment_disable_tab_mapping = true
