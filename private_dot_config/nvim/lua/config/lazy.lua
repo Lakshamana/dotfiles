@@ -276,6 +276,7 @@ vim.lsp.config("kotlin_language_server", {
 
 vim.lsp.config("vtsls", {
   settings = {
+    complete_function_calls = false,
     typescript = {
       suggest = {
         completeFunctionCalls = false,

@@ -120,7 +120,7 @@ function M.map(tbl, fn)
 end
 
 function M.get_openai_adapter()
-  local openai = require("codecompanion.adapters.openai")
+  local openai = require("codecompanion.adapters.http.openai")
 
   return require("codecompanion.adapters").extend("openai", {
     handlers = {
@@ -154,7 +154,7 @@ function M.get_openai_adapter()
 end
 
 function M.get_anthropic_adapter()
-  local anthropic = require("codecompanion.adapters.anthropic")
+  local anthropic = require("codecompanion.adapters.http.anthropic")
   local idx = 1
 
   return require("codecompanion.adapters").extend("anthropic", {
