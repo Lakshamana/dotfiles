@@ -181,7 +181,9 @@ sudo pacman -Sy \
       python-i3ipc \
       ttfautohint \
       zip \
-      unzip
+      unzip \
+      wget \
+      htop
 
 log 'configuring NetworkManager...'
 sudo rc-update add NetworkManager default

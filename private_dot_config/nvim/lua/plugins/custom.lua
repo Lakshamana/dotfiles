@@ -130,6 +130,11 @@ return {
             slash_commands = adapter.get_slash_commands(),
             adapter = "anthropic",
             model = "claude-sonnet-4-20250514",
+            tools = {
+              opts = {
+                auto_submit_errors = true,
+              }
+            }
           },
           inline = {
             adapter = "openai",
