@@ -40,6 +40,27 @@ function ImgStrategies.anthropic(chat, id, input)
   }
 end
 
+---@param chat CodeCompanion.Chat
+---@param id string
+---@param input string
+function ImgStrategies.claude_code(chat, id, input)
+  -- return {
+  --   {
+  --     type = "text",
+  --     text = "the user is sharing this image with you. be ready for a query or task regarding this image",
+  --   },
+  --   {
+  --     type = "image",
+  --     source = {
+  --       type = "base64",
+  --       media_type = "image/png",
+  --       data = input,
+  --     },
+  --   },
+  -- }
+  return input
+end
+
 local URIStrategies = {}
 function URIStrategies.openai(base64)
   local paste = require("img-clip.paste")
@@ -51,6 +72,16 @@ end
 function URIStrategies.anthropic(base64)
   return base64
 end
+
+function URIStrategies.claude_code(base64)
+  return base64
+end
+
+local tags = {
+  openai = "adapter.image_url",
+  anthropic = "adapter.image_url",
+  claude_code = "image",
+}
 
 local default_model = "claude-sonnet-4-20250514"
 local available_models = {
@@ -77,7 +108,8 @@ end
 ---@param chat CodeCompanion.Chat
 ---@param id string
 ---@param input string
-function M.add_image(chat, id, input)
+---@param adapter_name string
+function M.add_image(chat, id, input, adapter_name)
   local new_message = ImgStrategies[chat.adapter.name](chat, id, input)
 
   local constants = require("codecompanion.config").config.constants
@@ -86,10 +118,18 @@ function M.add_image(chat, id, input)
   --   content = vim.fn.json_encode(new_message),
   -- }, { reference = id, visible = false })
 
-  chat:add_reference({
-    role = constants.USER_ROLE,
-    content = vim.fn.json_encode(new_message),
-  }, "adapter.image_url", id)
+  if adapter_name == "claude_code" then
+    chat:add_reference({
+      role = constants.USER_ROLE,
+      content = input,
+    }, tags[adapter_name], id, { visible = false, context_opts = { mimetytpe = "image/png" } })
+    return
+  else
+    chat:add_reference({
+      role = constants.USER_ROLE,
+      content = vim.fn.json_encode(new_message),
+    }, tags[adapter_name], id, { visible = false })
+  end
 end
 
 ---@param chat CodeCompanion.Chat
@@ -99,7 +139,7 @@ function M.slash_paste_image(chat)
   local url = URIStrategies[chat.adapter.name](base64res)
   local hash = vim.fn.sha256(url)
   local id = "<pasted_image>" .. hash:sub(1, 16) .. "</pasted_image>"
-  M.add_image(chat, id, url)
+  M.add_image(chat, id, url, chat.adapter.name)
 end
 
 function M.get_slash_commands()
@@ -172,7 +212,6 @@ function M.get_anthropic_adapter()
             -- Access the first element (idx-indexed) text field
             local first_element = v.content[idx]
 
-
             if first_element and first_element.text then
               local ok, json_res = pcall(function()
                 return vim.fn.json_decode(first_element.text)
@@ -196,6 +235,34 @@ function M.get_anthropic_adapter()
           return v
         end)
 
+        return result
+      end,
+    },
+    schema = {
+      model = {
+        default = current_model,
+      },
+      extended_thinking = {
+        default = false,
+      },
+    },
+  })
+end
+
+function M.get_claude_code_adapter()
+  local cc = require("codecompanion.adapters.acp.claude_code")
+
+  return require("codecompanion.adapters").extend("claude_code", {
+    env = {
+      CLAUDE_CODE_OAUTH_TOKEN = os.getenv("CLAUDE_CODE_OAUTH_TOKEN"),
+    },
+    handlers = {
+      form_parameters = function(self, params, messages)
+        local result = cc.handlers.form_parameters(self, params, messages)
+        return result
+      end,
+      form_messages = function(self, messages, capabilities)
+        local result = cc.handlers.form_messages(self, messages, capabilities)
         return result
       end,
     },

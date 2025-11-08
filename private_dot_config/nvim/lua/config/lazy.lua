@@ -21,8 +21,7 @@ require("lazy").setup({
       opts = { colorscheme = "cyberdream" },
     },
     -- import any extras modules here
-    { import = "lazyvim.plugins.extras.lang.elixir" },
-    { import = "lazyvim.plugins.extras.lang.kotlin" },
+    -- { import = "lazyvim.plugins.extras.lang.elixir" },
     { import = "lazyvim.plugins.extras.lang.go" },
     { import = "lazyvim.plugins.extras.lang.rust" },
     { import = "lazyvim.plugins.extras.lang.json" },
@@ -212,67 +211,36 @@ vim.lsp.config("emmet_language_server", {
 --   },
 -- })
 
-vim.lsp.config("ts_ls", {
-  init_options = {
-    preferences = {
-      includeInlayParameterNameHints = "all",
-      includeCompletionsWithInsertText = true,
-      includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-      includeInlayVariableTypeHintsWhenTypeMatchesName = false,
-      includeInlayFunctionParameterTypeHints = true,
-      includeInlayVariableTypeHints = false,
-      includeInlayPropertyDeclarationTypeHints = true,
-      includeInlayFunctionLikeReturnTypeHints = false,
-      includeInlayEnumMemberValueHints = true,
-    },
-    -- plugins = {
-    --   {
-    --     name = "@vue/typescript-plugin",
-    --     location = require("mason-registry").get_package("vue-language-server"):get_install_path()
-    --       .. "/node_modules/@vue/language-server",
-    --     languages = { "vue" },
-    --   },
-    -- },
-    filetypes = {
-      "javascript",
-      "javascriptreact",
-      "typescript",
-      "typescriptreact",
-      "vue",
-    },
-  },
-})
-
-vim.lsp.config("vuels", {})
-
-vim.lsp.config("kotlin_language_server", {
-  cmd = { "kotlin-language-server" },
-  root_dir = require("lspconfig.util").root_pattern(
-    "settings.gradle",
-    "settings.gradle.kts",
-    "build.gradle",
-    "build.gradle.kts",
-    ".git"
-  ),
-  settings = {
-    kotlin = {
-      inlayHints = {
-        typeHints = true,
-        parameterHints = true,
-        chainedHints = true,
-      },
-      externalSources = {
-        useKlsScheme = true,
-      },
-      indexing = {
-        enabled = true,
-      },
-    },
-  },
-  init_options = {
-    gradleProjectPath = vim.fn.getcwd() .. "/build.gradle.kts", -- or .gradle
-  },
-})
+-- vim.lsp.config("ts_ls", {
+--   init_options = {
+--     preferences = {
+--       includeInlayParameterNameHints = "all",
+--       includeCompletionsWithInsertText = true,
+--       includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+--       includeInlayVariableTypeHintsWhenTypeMatchesName = false,
+--       includeInlayFunctionParameterTypeHints = true,
+--       includeInlayVariableTypeHints = false,
+--       includeInlayPropertyDeclarationTypeHints = true,
+--       includeInlayFunctionLikeReturnTypeHints = false,
+--       includeInlayEnumMemberValueHints = true,
+--     },
+--     -- plugins = {
+--     --   {
+--     --     name = "@vue/typescript-plugin",
+--     --     location = require("mason-registry").get_package("vue-language-server"):get_install_path()
+--     --       .. "/node_modules/@vue/language-server",
+--     --     languages = { "vue" },
+--     --   },
+--     -- },
+--     filetypes = {
+--       "javascript",
+--       "javascriptreact",
+--       "typescript",
+--       "typescriptreact",
+--       "vue",
+--     },
+--   },
+-- })
 
 vim.lsp.config("vtsls", {
   settings = {
@@ -306,4 +274,18 @@ vim.lsp.config("vtsls", {
 --       hybridMode = false,
 --     },
 --   },
+-- })
+--
+
+-- vim.lsp.config("nextls", {
+--   cmd = {"nextls", "--stdio"},
+--   filetypes = { "eelixir", "heex" },
+--   init_options = {
+--     experimental = {
+--       completions = {
+--         enabled = true,
+--         enable = true
+--       }
+--     }
+--   }
 -- })

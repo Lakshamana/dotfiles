@@ -2,6 +2,20 @@ return {
   { "ellisonleao/gruvbox.nvim" },
 
   {
+    "nvimdev/dashboard-nvim",
+    lazy = false,
+    opts = {
+      preview = {
+        command = "cat",
+        file_path = "~/.config/nvim/lua/plugins/dashboard/headers/header1.txt",
+        file_height = 10,
+        file_width = 71,
+      },
+    },
+    dependencies = { { "nvim-tree/nvim-web-devicons" } },
+  },
+
+  {
     "neovim/nvim-lspconfig",
     opts = function(_, opts)
       -- Extend the existing gopls config
@@ -34,13 +48,24 @@ return {
   {
     "olimorris/codecompanion.nvim",
     config = function()
-      local spinner = require("plugins.codecompanion.spinner")
-      spinner:init()
-
       local adapter = require("plugins.codecompanion.adapters")
       require("codecompanion").setup({
+        display = {
+          diff = {
+            enabled = true,
+            provider = "inline",
+            provider_opts = {
+              inline = {
+                layout = "buffer",
+              }
+            }
+          }
+        },
         extensions = {
           history = {
+            spinner = {
+              style = "snacks",
+            },
             enabled = true,
             opts = {
               -- Keymap to open history from chat buffer (default: gh)
@@ -52,7 +77,7 @@ return {
               -- Number of days after which chats are automatically deleted (0 to disable)
               expiration_days = 0,
               -- Picker interface (auto resolved to a valid picker)
-              picker = "fzf-lua", --- ("telescope", "snacks", "fzf-lua", or "default") 
+              picker = "fzf-lua", --- ("telescope", "snacks", "fzf-lua", or "default")
               ---Optional filter function to control which chats are shown when browsing
               chat_filter = nil, -- function(chat_data) return boolean end
               -- Customize picker keymaps (optional)
@@ -64,7 +89,7 @@ return {
               ---Automatically generate titles for new chats
               auto_generate_title = true,
               title_generation_opts = {
-                ---Adapter for generating titles (defaults to current chat adapter) 
+                ---Adapter for generating titles (defaults to current chat adapter)
                 adapter = nil, -- "copilot"
                 ---Model for generating titles (defaults to current chat model)
                 model = nil, -- "gpt-4o"
@@ -76,7 +101,7 @@ return {
                   -- this can be a custom function that applies some custom
                   -- formatting to the title.
                   return original_title
-                end
+                end,
               },
               ---On exiting and entering neovim, loads the last chat on opening chat
               continue_last_chat = false,
@@ -112,9 +137,9 @@ return {
                 -- Path to the VectorCode executable
                 vectorcode_exe = "vectorcode",
                 -- Tool configuration
-                tool_opts = { 
+                tool_opts = {
                   -- Default number of memories to retrieve
-                  default_num = 10 
+                  default_num = 10,
                 },
                 -- Enable notifications for indexing progress
                 notify = true,
@@ -122,8 +147,8 @@ return {
                 -- (requires VectorCode 0.6.12+ for efficient incremental indexing)
                 index_on_startup = false,
               },
-            }
-          }
+            },
+          },
         },
         strategies = {
           chat = {
@@ -133,6 +158,7 @@ return {
             tools = {
               opts = {
                 auto_submit_errors = true,
+                auto_submit_success = true,
               }
             }
           },
@@ -144,7 +170,17 @@ return {
         adapters = {
           openai = adapter.get_openai_adapter(),
           anthropic = adapter.get_anthropic_adapter(),
+          acp = {
+            claude_code = adapter.get_claude_code_adapter,
+          }
         },
+        memory = {
+          opts = {
+            chat = {
+              enabled = true,
+            }
+          }
+        }
       })
     end,
     keys = {
@@ -184,8 +220,7 @@ return {
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
-      "Davidyz/VectorCode",
-      "j-hui/fidget.nvim",
+      "lalitmee/codecompanion-spinners.nvim",
       {
         -- support for image pasting
         "HakonHarnes/img-clip.nvim",
@@ -215,7 +250,7 @@ return {
         ft = { "markdown", "Avante", "codecompanion" },
       },
       {
-        "echasnovski/mini.diff",
+        "nvim-mini/mini.diff",
         config = function()
           local diff = require("mini.diff")
           diff.setup({
@@ -224,7 +259,7 @@ return {
           })
         end,
       },
-        "ravitemer/codecompanion-history.nvim"
+      "ravitemer/codecompanion-history.nvim",
     },
   },
 
@@ -292,7 +327,7 @@ return {
   --     --- The below dependencies are optional,
   --     "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
   --     "ibhagwan/fzf-lua", -- for file_selector provider fzf
-  --     "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+  --     "nvim-tree/nvim-web-devicons", -- or nvim-mini/mini.icons
   --     "zbirenbaum/copilot.lua", -- for providers='copilot'
   --     {
   --       -- support for image pasting
@@ -479,7 +514,7 @@ return {
   },
 
   {
-    "echasnovski/mini.pairs",
+    "nvim-mini/mini.pairs",
     enabled = false,
   },
 
@@ -561,18 +596,19 @@ return {
   },
 
   {
-    "ggandor/flit.nvim",
-    enabled = true,
-    dependencies = { "ggandor/leap.nvim" },
-    keys = function()
-      ---@type LazyKeys[]
-      local ret = {}
-      for _, key in ipairs({ "f", "F", "t", "T" }) do
-        ret[#ret + 1] = { key, mode = { "n", "x", "o" }, desc = key }
-      end
-      return ret
-    end,
-    opts = { labeled_modes = "nx" },
+    "ggandor/leap.nvim",
+    keys = {
+      {
+        "s",
+        mode = { "n", "x", "o" },
+        false,
+      },
+      {
+        "S",
+        mode = { "n", "x", "o" },
+        false
+      },
+    },
   },
 
   {
