@@ -1,6 +1,8 @@
 return {
   { "ellisonleao/gruvbox.nvim" },
 
+  { "brennovich/marques-de-itu" },
+
   {
     "nvimdev/dashboard-nvim",
     lazy = false,
@@ -57,15 +59,17 @@ return {
             provider_opts = {
               inline = {
                 layout = "buffer",
-              }
-            }
-          }
+              },
+            },
+          },
         },
         extensions = {
-          history = {
-            spinner = {
+          spinner = {
+            opts = {
               style = "snacks",
             },
+          },
+          history = {
             enabled = true,
             opts = {
               -- Keymap to open history from chat buffer (default: gh)
@@ -153,14 +157,14 @@ return {
         strategies = {
           chat = {
             slash_commands = adapter.get_slash_commands(),
-            adapter = "anthropic",
-            model = "claude-sonnet-4-20250514",
+            adapter = "claude_code",
+            model = "default",
             tools = {
               opts = {
                 auto_submit_errors = true,
                 auto_submit_success = true,
-              }
-            }
+              },
+            },
           },
           inline = {
             adapter = "openai",
@@ -172,15 +176,15 @@ return {
           anthropic = adapter.get_anthropic_adapter(),
           acp = {
             claude_code = adapter.get_claude_code_adapter,
-          }
+          },
         },
         memory = {
           opts = {
             chat = {
               enabled = true,
-            }
-          }
-        }
+            },
+          },
+        },
       })
     end,
     keys = {
@@ -606,7 +610,7 @@ return {
       {
         "S",
         mode = { "n", "x", "o" },
-        false
+        false,
       },
     },
   },
@@ -718,6 +722,7 @@ return {
           -- require("dap.ext.vscode").load_launchjs()
 
           local dap = require("dap")
+
           dap.configurations.lua = {
             {
               name = "Current file (local-lua-dbg, nlua)",
@@ -752,6 +757,11 @@ return {
               projectDir = "${workspaceFolder}",
             },
           }
+          dap.adapters.mix_task = {
+            type = "executable",
+            command = "elixir-ls-debugger",
+            args = {},
+          }
 
           dap.configurations.javascript = {
             {
@@ -769,31 +779,68 @@ return {
               preLaunchTask = "npm: watch",
             },
           }
-
-          dap.adapters.mix_task = {
-            type = "executable",
-            command = "elixir-ls-debugger",
-            args = {},
-          }
-
           dap.adapters.extensionHost = {
             type = "executable",
             command = "js-debug-adapter",
             args = {},
           }
 
+          dap.configurations.rust = {}
+          table.insert(dap.configurations.rust, {
+            name = "Debug Embedded (probe-rs)",
+            type = "probe_rs",
+            request = "launch",
+            chip = "STM32F103C8", -- Your specific chip
+            flashingConfig = {
+              flashingEnabled = true,
+              haltAfterReset = true, -- Changed to true
+            },
+            cwd = "${workspaceFolder}",
+            coreConfigs = {
+              {
+                coreIndex = 0,
+                programBinary = function()
+                  return vim.fn.getcwd() .. "/target/thumbv7m-none-eabi/debug/blink"
+                end,
+              },
+            },
+            -- Skip stepping into asm files and other internals
+            skipFiles = {
+              "**/asm/*.rs",
+              -- You can also skip other internal paths:
+              "**/.cargo/**",
+              "**/rustc/**",
+            },
+          })
+          dap.adapters.probe_rs = {
+            type = "server",
+            port = 1337,
+            executable = {
+              command = "probe-rs",
+              args = { "dap-server", "--port", "1337" },
+            },
+          }
+
+          dap.defaults.fallback.stepping = {
+            skipFiles = {
+              "**/asm/*.rs",
+              "**/.cargo/**",
+              "**/rustc/**",
+            }
+          }
+
           require("dapui").setup(opts)
           -- dap.listeners.after.event_initialized["dapui_config"] = function()
-          --   require("dapui").open({})
-          -- end
-          dap.listeners.before.event_terminated["dapui_config"] = function()
-            require("dapui").close({})
-          end
-          dap.listeners.before.event_exited["dapui_config"] = function()
-            require("dapui").close({})
-          end
-        end,
-      },
+            --   require("dapui").open({})
+            -- end
+            dap.listeners.before.event_terminated["dapui_config"] = function()
+              require("dapui").close({})
+            end
+            dap.listeners.before.event_exited["dapui_config"] = function()
+              require("dapui").close({})
+            end
+          end,
+        },
       {
         "jay-babu/mason-nvim-dap.nvim",
         dependencies = "mason.nvim",

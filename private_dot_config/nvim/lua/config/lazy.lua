@@ -278,7 +278,7 @@ vim.lsp.config("vtsls", {
 --
 
 -- vim.lsp.config("nextls", {
---   cmd = {"nextls", "--stdio"},
+
 --   filetypes = { "eelixir", "heex" },
 --   init_options = {
 --     experimental = {
