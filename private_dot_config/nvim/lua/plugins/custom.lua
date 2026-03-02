@@ -487,7 +487,7 @@ return {
     ---@type blink.cmp.Config
     opts = {
       keymap = {
-        preset = "enter",
+        preset = "default",
         cmdline = {},
         ["<C-y>"] = { "select_and_accept" },
         ["<C-p>"] = { "select_prev", "fallback" },
@@ -553,7 +553,7 @@ return {
 
   {
     "folke/noice.nvim",
-    enabled = true,
+    enabled = false,
   },
 
   {
@@ -600,7 +600,41 @@ return {
   },
 
   {
-    "ggandor/leap.nvim",
+    url = "https://codeberg.org/andyg/leap.nvim",
+    init = function ()
+      local function ft(key_specific_args)
+        require('leap').leap(
+          vim.tbl_deep_extend('keep', key_specific_args, {
+            inputlen = 1,
+            inclusive = true,
+            opts = {
+              -- Force autojump.
+              labels = '',
+              -- Match the modes where you don't need labels (`:h mode()`).
+              safe_labels = vim.fn.mode(1):match('o') and '' or nil,
+            },
+          })
+        )
+      end
+
+      -- A helper function making it easier to set "clever-f" behavior
+      -- (using f/F or t/T instead of ;/, - see the plugin clever-f.vim).
+      local clever = require('leap.user').with_traversal_keys
+      local clever_f, clever_t = clever('f', 'F'), clever('t', 'T')
+
+      vim.keymap.set({ 'n', 'x', 'o' }, 'f', function()
+        ft { opts = clever_f }
+      end)
+      vim.keymap.set({ 'n', 'x', 'o' }, 'F', function()
+        ft { backward = true, opts = clever_f }
+      end)
+      vim.keymap.set({ 'n', 'x', 'o' }, 't', function()
+        ft { offset = -1, opts = clever_t }
+      end)
+      vim.keymap.set({ 'n', 'x', 'o' }, 'T', function()
+        ft { backward = true, offset = 1, opts = clever_t }
+      end)
+    end,
     keys = {
       {
         "s",
@@ -826,21 +860,21 @@ return {
               "**/asm/*.rs",
               "**/.cargo/**",
               "**/rustc/**",
-            }
+            },
           }
 
           require("dapui").setup(opts)
           -- dap.listeners.after.event_initialized["dapui_config"] = function()
-            --   require("dapui").open({})
-            -- end
-            dap.listeners.before.event_terminated["dapui_config"] = function()
-              require("dapui").close({})
-            end
-            dap.listeners.before.event_exited["dapui_config"] = function()
-              require("dapui").close({})
-            end
-          end,
-        },
+          --   require("dapui").open({})
+          -- end
+          dap.listeners.before.event_terminated["dapui_config"] = function()
+            require("dapui").close({})
+          end
+          dap.listeners.before.event_exited["dapui_config"] = function()
+            require("dapui").close({})
+          end
+        end,
+      },
       {
         "jay-babu/mason-nvim-dap.nvim",
         dependencies = "mason.nvim",

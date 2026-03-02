@@ -268,6 +268,18 @@ vim.lsp.config("vtsls", {
   },
 })
 
+vim.lsp.config("rust-analyzer", {
+  settings = {
+    ["rust-analyzer"] = {
+      cargo = {
+        buildScripts = {
+          allFeatures = false,
+        },
+      }
+    },
+  },
+})
+
 -- lspconfig.volar.setup({
 --   init_options = {
 --     vue = {
